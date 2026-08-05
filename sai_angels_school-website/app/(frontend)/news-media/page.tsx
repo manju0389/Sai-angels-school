@@ -5,10 +5,24 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
+interface NewsItem {
+  src: string;
+  title: string;
+  category: string;
+  year: string | number;
+}
+
+interface ApiNewsItem {
+  image: string;
+  eventName: string;
+  category: string;
+  year: string | number;
+}
+
 export default function NewsMediaPage() {
 
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [items, setItems] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [items, setItems] = useState<NewsItem[]>([]);
 
   // Fetch News Media
   useEffect(() => {
@@ -17,7 +31,7 @@ export default function NewsMediaPage() {
       .then(res => res.json())
       .then(result => {
 
-        const formatted = result.data.map(item => ({
+        const formatted = result.data.map((item: ApiNewsItem) => ({
           src: item.image,
           title: item.eventName,
           category: item.category,
