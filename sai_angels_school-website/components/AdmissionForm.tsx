@@ -2,7 +2,7 @@
 
 export default function AdmissionEnquiryForm() {
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert("Form submitted!");
   };
