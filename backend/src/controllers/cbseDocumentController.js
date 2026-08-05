@@ -1,4 +1,4 @@
-import CBSEDocument from "../models/cbseDocument.js";
+import CBSEDocument from "../models/CBSEDocument.js";
 import axios from "axios";
 
 /**
