@@ -111,11 +111,11 @@ export default function Sidebar() {
             Principal Speak Page
           </Link>
 
-          <hr className="border-t border-slate-400"></hr>
+          {/*<hr className="border-t border-slate-400"></hr>
 
-          <Link href="/admin/SaiCherbsInternational" className="block px-4 py-2 rounded-lg hover:bg-slate-500">
+           <Link href="/admin/SaiCherbsInternational" className="block px-4 py-2 rounded-lg hover:bg-slate-500">
             Sai Cherbs International Page
-          </Link>
+          </Link> */}
 
           <hr className="border-t border-slate-400"></hr>
 
