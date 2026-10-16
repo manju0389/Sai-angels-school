@@ -61,10 +61,10 @@ export default function Header() {
     {
       name: "Activities",
       submenu: [
-        { name: "Boarding Home", link: "/activities/boarding-home" },
-        { name: "Little Sai Angels Pre School", link: "/activities/little-sai-angels-pre-school" },
+       // { name: "Boarding Home", link: "/activities/boarding-home" },
+       // { name: "Little Sai Angels Pre School", link: "/activities/little-sai-angels-pre-school" },
         { name: "Sai Angels CBSE School", link: "/activities/sai-angels-cbse-school" },
-        { name: "Sai Cherubs International", link: "/activities/sai-cherubs-international" },
+       // { name: "Sai Cherubs International", link: "/activities/sai-cherubs-international" },
       ],
     },
 
