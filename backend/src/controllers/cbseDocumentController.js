@@ -1,5 +1,5 @@
 
-import CBSEDocument from "../models/cbseDocument.js";
+import CbseDocument from "../models/CBSEDocument.js";
 import cloudinary from "../config/cloudinary.js";
 
 
