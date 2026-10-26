@@ -1,4 +1,3 @@
-
 "use client";
 
 import QuickLinks from "@/components/QuickLinks";

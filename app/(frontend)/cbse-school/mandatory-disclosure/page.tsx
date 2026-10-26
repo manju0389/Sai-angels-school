@@ -4,52 +4,71 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+// SEO metadata for the Mandatory Disclosure page.
 export const metadata: Metadata = {
-  title: "Mandatory Disclosure | Best CBSE School in Chikmagalur | Top Boarding & PU College",
-  description: "View the Mandatory Disclosure of our institution, offering primary education, PU college, boarding facilities, and a world-class campus in Chikmagalur.",
-  keywords: ["Chikmagalur best school", "Best CBSE School in Chikmagalur", "Top CBSE School in Chikmagalur",
-    "Best Boarding School in Chikmagalur", "Best PU College in Chikmagalur", "Top PU College in Chikmagalur",
-    "Best Primary School in Chikmagalur", "Best Campus in Chikmagalur",
+  title:
+    "Mandatory Disclosure | Best CBSE School in Chikmagalur | Top Boarding & PU College",
+  description:
+    "View the Mandatory Disclosure of our institution, offering primary education, PU college, boarding facilities, and a world-class campus in Chikmagalur.",
+  keywords: [
+    "Chikmagalur best school",
+    "Best CBSE School in Chikmagalur",
+    "Top CBSE School in Chikmagalur",
+    "Best Boarding School in Chikmagalur",
+    "Best PU College in Chikmagalur",
+    "Top PU College in Chikmagalur",
+    "Best Primary School in Chikmagalur",
+    "Best Campus in Chikmagalur",
   ],
   alternates: {
-    canonical: "https://www.saiangelsschool.com/mandatory-disclosure",
+    canonical:
+      "https://www.saiangelsschool.com/cbse-school/mandatory-disclosure",
   },
   openGraph: {
     title: "Sai Angels School | Mandatory Disclosure",
-    description: "Discover Sai Angels School in Chikmagalur, dedicated to academic excellence and holistic education.",
-    url: "https://www.saiangelsschool.com/mandatory-disclosure",
+    description:
+      "Discover Sai Angels School in Chikmagalur, dedicated to academic excellence and holistic education.",
+    url: "https://www.saiangelsschool.com/cbse-school/mandatory-disclosure",
     siteName: "Sai Angels School",
     locale: "en_IN",
     type: "website",
   },
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+// Configure the backend API URL.
+const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+const documentsApiUrl = apiUrl
+  ? `${apiUrl}/cbse-documents`
+  : null;
 
-// Fetch the mandatory disclosure PDF details from the backend.
+// Fetch the Mandatory Disclosure PDF details from the backend.
 async function getMandatoryDisclosurePDF() {
-  if (!apiUrl) {
+  if (!documentsApiUrl) {
     console.error("NEXT_PUBLIC_API_URL is not configured.");
     return null;
   }
 
   try {
     const res = await fetch(
-      `${apiUrl.replace(/\/$/, "")}/cbse-documents/pdf/mandatory-disclosure`,
+      `${documentsApiUrl}/pdf/mandatory-disclosure`,
       { cache: "no-store" }
     );
 
     if (!res.ok) {
       console.error(
-        `Failed to fetch Societies / Trust Certificate PDF: ${res.status}`
+        `Failed to fetch Mandatory Disclosure PDF: ${res.status}`
       );
       return null;
     }
 
     const result = await res.json();
+
     return result.data ?? null;
   } catch (error) {
-    console.error("Failed to fetch mandatory disclosure PDF:", error);
+    console.error(
+      "Failed to fetch Mandatory Disclosure PDF:",
+      error
+    );
     return null;
   }
 }
@@ -69,8 +88,11 @@ export default async function MandatoryDisclosurePage() {
       {/* Centered PDF link */}
       <section className="container mx-auto mt-5 px-4 py-6">
         <div className="mt-5 flex justify-center">
-          {pdf?._id ? (
-            <Link href={`${apiUrl}/cbse-documents/view/${pdf._id}`} target="_blank" rel="noopener noreferrer"
+          {pdf?._id && documentsApiUrl ? (
+            <Link
+              href={`${documentsApiUrl}/view/${pdf._id}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group rounded-lg bg-blue-600 p-1 transition hover:bg-blue-700"
             >
               <div className="flex items-center gap-3 rounded-md border-2 border-dashed border-white px-6 py-3 font-semibold text-white">

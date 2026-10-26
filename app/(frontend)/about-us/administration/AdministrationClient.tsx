@@ -1,4 +1,3 @@
-
 "use client";
 
 import QuickLinks from "@/components/QuickLinks";
@@ -100,8 +99,7 @@ export default function AdministrationPage() {
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600 transition-colors group-hover:bg-pink-600 group-hover:text-white">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                            className="h-4 w-4" aria-hidden="true"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6" />
                           </svg>

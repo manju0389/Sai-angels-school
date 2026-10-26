@@ -181,7 +181,7 @@ if (data.length === 0 && files.length === 0) {
       const result = await res.json();
       if (res.ok) {
         alert(
-          "Founder updated successfully"
+          "Principal updated successfully"
         );
 
         // Reset edit states after update
@@ -361,19 +361,14 @@ if (data.length === 0 && files.length === 0) {
                     <>
                       <div className="flex gap-2 flex-wrap mb-2">
                         {(editingId === item._id ? tempImages : item.images).map((img, i) => (
-                          <img
-                            key={i}
-                            src={img.url}
-                            className="w-16 h-16 rounded object-cover border"
+                          <img key={i} src={img.url} className="w-16 h-16 rounded object-cover border"
                           />
                         ))}
                       </div>
 
                       {editingId === item._id && (
                         <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleEditImages}
+                          type="file" accept="image/*" onChange={handleEditImages}
                         />
                       )}
                     </>

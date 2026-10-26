@@ -3,8 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Our Founder | Best School in Chikmagalur | Top CBSE School in Chikmagalur",
-  description:
-    "Learn about the founder and vision behind the best school in Chikmagalur. We provide quality education through the Top CBSE School in Chikmagalur, Best Boarding School in Chikmagalur and Best PU College in Chikmagalur.",
+  description: "Learn about the founder and vision behind the best school in Chikmagalur. We provide quality education through the Top CBSE School in Chikmagalur, Best Boarding School in Chikmagalur and Best PU College in Chikmagalur.",
 
   keywords:[
     "Chikmagalur best school", "Top CBSE School in Chikmagalur",
@@ -30,7 +29,6 @@ export const metadata: Metadata = {
     type: "website",
   }
 };
-
 
 export default function Page(){
  return <FounderClient/>;

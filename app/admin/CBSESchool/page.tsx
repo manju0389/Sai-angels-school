@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -11,6 +10,7 @@ interface PDFType {
 }
 
 export default function PDFManagement() {
+  
   const API = `${process.env.NEXT_PUBLIC_API_URL}/cbse-documents`;
 
   const [title, setTitle] = useState("");
@@ -159,7 +159,7 @@ export default function PDFManagement() {
         <label htmlFor="pdf-title" className="mb-2 block font-medium">
           PDF Title
         </label>
-        
+
         <input id="pdf-title" placeholder="Enter PDF title" value={title}
           onChange={(e) => setTitle(e.target.value)} className="mb-4 h-11 w-full rounded border px-3"
         />
@@ -193,8 +193,7 @@ export default function PDFManagement() {
           Select PDF File
         </label>
         <input id="pdf-file" type="file" accept=".pdf,application/pdf"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-           className="mb-5 block w-full rounded border p-2 cursor-pointer"
+          onChange={(e) => setFile(e.target.files?.[0] || null)} className="mb-5 block w-full rounded border p-2 cursor-pointer"
         />
 
         <button type="button" onClick={handleUpload} disabled={loading}
@@ -233,8 +232,7 @@ export default function PDFManagement() {
 
                   <td className="p-3">
                     <button type="button" onClick={() => handleDelete(item)}
-                      disabled={deletingId !== null}
-                      className="cursor-pointer rounded bg-red-600 px-3 py-2 text-white hover:bg-red-700 disabled:opacity-60"
+                      disabled={deletingId !== null} className="cursor-pointer rounded bg-red-600 px-3 py-2 text-white hover:bg-red-700 disabled:opacity-60"
                     >
                       {deletingId === item._id ? "Deleting..." : "Delete"}
                     </button>
