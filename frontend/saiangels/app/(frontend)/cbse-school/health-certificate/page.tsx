@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Water, Health & Sanitation Certificates | Best CBSE School in Chikmagalur",
   description: "View the Water, Health and Sanitation Certificates of Sai Angels School in Chikmagalur, providing quality CBSE education, boarding facilities, PU college, and a world-class campus.",
