@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Fee Structure | Best CBSE School in Chikmagalur | Top Boarding & PU College",
   description: "View the fee structure of Sai Angels School in Chikmagalur, offering quality CBSE education, PU college, boarding facilities, and a world-class campus.",
