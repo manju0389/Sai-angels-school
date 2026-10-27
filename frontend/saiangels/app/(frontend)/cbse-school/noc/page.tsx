@@ -3,6 +3,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "No Objection Certificate (NOC) | Best CBSE School in Chikmagalur | Sai Angels School",
   description: "View the No Objection Certificate (NOC) of Sai Angels School in Chikmagalur, Karnataka.",
