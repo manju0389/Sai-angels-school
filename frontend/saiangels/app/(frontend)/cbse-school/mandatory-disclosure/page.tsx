@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 // SEO metadata for the Mandatory Disclosure page.
 export const metadata: Metadata = {
   title:
