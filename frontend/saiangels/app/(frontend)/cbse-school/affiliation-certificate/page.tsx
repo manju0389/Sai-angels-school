@@ -3,6 +3,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Affiliation Certificate | Best CBSE School in Chikmagalur | Top Boarding & PU College",
   description: "View the Affiliation Certificate of our institution, offering primary education, PU college, boarding facilities, and a world-class campus in Chikmagalur.",
