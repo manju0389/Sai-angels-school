@@ -4,8 +4,6 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Annual Academic Calendar | Best CBSE School in Chikmagalur | Top Boarding & PU College",
   description: "View the annual academic calendar of Sai Angels School in Chikmagalur, offering quality CBSE education, PU college, boarding facilities, and a world-class campus.",
