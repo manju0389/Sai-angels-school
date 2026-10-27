@@ -3,6 +3,8 @@ import Link from "next/link";
 import { FileText, MousePointerClick } from "lucide-react";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Building Certificate | Best CBSE School in Chikmagalur | Sai Angels School",
   description: "View the Building Certificate of Sai Angels School in Chikmagalur, Karnataka, demonstrating our commitment to a safe and quality learning environment.",
