@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import CBSESchool from "@/components/CBSESchool";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Geo-Tagged Infrastructure | Best CBSE School in Chikmagalur | Top Boarding & PU College",
   description: "Explore geo-tagged infrastructure photos of Sai Angels School in Chikmagalur, featuring its campus, facilities, and learning environment.",
