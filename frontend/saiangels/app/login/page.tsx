@@ -28,17 +28,20 @@ export default function AdminLoginPage() {
         return;
       }
 
-      const response = await fetch(`${apiUrl}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: username.trim(),
-          password,
-        }),
-      });
+      const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      username: username.trim(),
+      password,
+    }),
+  }
+);
 
       const data = await response.json().catch(() => ({}));
 
