@@ -1,4 +1,4 @@
-
+tsx
 "use client";
 
 import { useState } from "react";
@@ -14,55 +14,51 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(
-  event: React.FormEvent<HTMLFormElement>
-) {
-  event.preventDefault();
-  setError("");
-  setLoading(true);
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
-    if (!apiUrl) {
-      setError("Backend URL is not configured.");
-      return;
-    }
+      if (!apiUrl) {
+        setError("Backend URL is not configured.");
+        return;
+      }
 
-    const response = await fetch(
-      `${apiUrl}/api/auth/login`,
-      {
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
-          username: username.trim(),
+          email: username.trim(),
           password,
         }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setError(
+          data.message || `Login failed. HTTP status: ${response.status}`
+        );
+        return;
       }
-    );
 
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
+      router.push("/admin/dashboard");
+    } catch (err) {
+      console.error("Login request failed:", err);
       setError(
-        data.message ||
-          `Login failed. HTTP status: ${response.status}`
+        "Cannot reach the backend. Check the backend URL, CORS settings, and server logs."
       );
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/admin/dashboard");
-  } catch (err) {
-    console.error("Login request failed:", err);
-    setError(
-      "Cannot reach the backend. Check the backend URL and server logs."
-    );
-  } finally {
-    setLoading(false);
   }
-}
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-100 px-4 py-10">
@@ -87,18 +83,18 @@ export default function AdminLoginPage() {
               htmlFor="username"
               className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              Username
+              Admin Email
             </label>
 
             <input
               id="username"
               name="username"
-              type="text"
+              type="email"
               autoComplete="username"
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your username"
+              placeholder="Enter your admin email"
               className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
           </div>
@@ -158,4 +154,3 @@ export default function AdminLoginPage() {
     </main>
   );
 }
-
