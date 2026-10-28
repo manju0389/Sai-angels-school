@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
           },
           credentials: "include",
           body: JSON.stringify({
-            email: username,
+            username,
             password,
           }),
         }
@@ -74,18 +74,18 @@ export default function AdminLoginPage() {
               htmlFor="username"
               className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              Admin Email
+              Username
             </label>
 
             <input
               id="username"
               name="username"
-              type="email"
+              type="text"
               autoComplete="username"
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your admin email"
+              placeholder="Enter your username"
               className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
           </div>
