@@ -14,42 +14,55 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
-    event.preventDefault();
-    setError("");
-    setLoading(true);
+  event: React.FormEvent<HTMLFormElement>
+) {
+  event.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        }
-      );
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Invalid login credentials.");
-        return;
-      }
-
-      router.push("/admin/dashboard");
-    } catch {
-      setError("Cannot connect to the server. Please try again.");
-    } finally {
-      setLoading(false);
+    if (!apiUrl) {
+      setError("Backend URL is not configured.");
+      return;
     }
+
+    const response = await fetch(
+      `${apiUrl}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: username.trim(),
+          password,
+        }),
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      setError(
+        data.message ||
+          `Login failed. HTTP status: ${response.status}`
+      );
+      return;
+    }
+
+    router.push("/admin/dashboard");
+  } catch (err) {
+    console.error("Login request failed:", err);
+    setError(
+      "Cannot reach the backend. Check the backend URL and server logs."
+    );
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-100 px-4 py-10">
