@@ -1,5 +1,5 @@
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const adminSchema = new mongoose.Schema(
   {
@@ -8,6 +8,15 @@ const adminSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
     email: {
       type: String,
       required: true,
@@ -15,11 +24,13 @@ const adminSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+
     password: {
       type: String,
       required: true,
       select: false,
     },
+
     role: {
       type: String,
       enum: ["admin"],
@@ -30,7 +41,8 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports =
+const Admin =
   mongoose.models.Admin ||
   mongoose.model("Admin", adminSchema);
 
+export default Admin;
