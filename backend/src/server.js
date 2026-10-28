@@ -26,8 +26,10 @@ const __dirname = path.dirname(__filename);
 
 app.set("trust proxy", 1);
 
-if (!process.env.MONGO_URI || !process.env.SESSION_SECRET) {
-  throw new Error("MONGO_URI and SESSION_SECRET must be configured");
+if (!process.env.MONGODB_URI || !process.env.SESSION_SECRET) {
+  throw new Error(
+    "MONGODB_URI and SESSION_SECRET must be configured"
+  );
 }
 
 // Middlewares
