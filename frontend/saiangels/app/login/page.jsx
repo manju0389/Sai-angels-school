@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="w-full cursor-pointer rounded-xl bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200"
           >
             Login
           </button>
