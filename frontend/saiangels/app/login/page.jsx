@@ -2,16 +2,53 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
+    setError("");
+    setLoading(true);
 
-    // Backend authentication will be added next.
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: username,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Invalid login credentials.");
+        return;
+      }
+
+      router.push("/admin/dashboard");
+    } catch {
+      setError("Cannot connect to the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -37,18 +74,18 @@ export default function AdminLoginPage() {
               htmlFor="username"
               className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              Username
+              Admin Email
             </label>
 
             <input
               id="username"
               name="username"
-              type="text"
+              type="email"
               autoComplete="username"
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your username"
+              placeholder="Enter your admin email"
               className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
           </div>
@@ -86,11 +123,18 @@ export default function AdminLoginPage() {
             </label>
           </div>
 
+          {error && (
+            <p role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-xl bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200"
+            disabled={loading}
+            className="w-full cursor-pointer rounded-xl bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-blue-200"
           >
-            Login
+            {loading ? "Signing in..." : "Login"}
           </button>
         </form>
 
@@ -101,3 +145,4 @@ export default function AdminLoginPage() {
     </main>
   );
 }
+
