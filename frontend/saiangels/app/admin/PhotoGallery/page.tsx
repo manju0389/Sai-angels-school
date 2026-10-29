@@ -27,7 +27,7 @@ export default function AdminGallery() {
   const API = `${process.env.NEXT_PUBLIC_API_URL}/admin/PhotoGallery`;
 
   const [form, setForm] = useState<GalleryForm>({ ...EMPTY_FORM });
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
   const [preview, setPreview] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -64,99 +64,95 @@ export default function AdminGallery() {
   }, [fetchData]);
 
   const resetForm = () => {
-    setForm({ ...EMPTY_FORM });
-    setImage(null);
-    setEditingId(null);
+  setForm({ ...EMPTY_FORM });
+  setImages([]);
+  setEditingId(null);
 
-    if (fileRef.current) {
-      fileRef.current.value = "";
-    }
-  };
+  if (fileRef.current) {
+    fileRef.current.value = "";
+  }
+};
 
-  const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  
+const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    if (loading) return;
+  if (loading) return;
 
-    if (!form.title.trim() || !form.category.trim() || !form.year.trim()) {
-      alert("Please enter the title, year, and category.");
-      return;
-    }
+  if (!form.title.trim() || !form.category.trim() || !form.year.trim()) {
+    alert("Please enter the title, year, and category.");
+    return;
+  }
 
-    if (!/^\d{4}$/.test(form.year.trim())) {
-      alert("Please enter a valid four-digit year.");
-      return;
-    }
+  if (!/^\d{4}$/.test(form.year.trim())) {
+    alert("Please enter a valid four-digit year.");
+    return;
+  }
 
-    if (!editingId && !image) {
-      alert("Please choose an image to upload.");
-      return;
-    }
+  if (!editingId && images.length === 0) {
+    alert("Please select at least one image.");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("title", form.title.trim());
-    formData.append("year", form.year.trim());
-    formData.append("category", form.category.trim());
+  const formData = new FormData();
+  formData.append("title", form.title.trim());
+  formData.append("year", form.year.trim());
+  formData.append("category", form.category.trim());
 
-    if (image) {
-      formData.append("image", image);
-    }
+  images.forEach((file) => {
+    formData.append("images", file);
+  });
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const url = editingId ? `${API}/${editingId}` : API;
+    const url = editingId ? `${API}/${editingId}` : API;
 
-      const res = await fetch(url, {
-        method: editingId ? "PUT" : "POST",
-        body: formData,
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(
-          result.message ||
-            (editingId ? "Update failed" : "Upload failed")
-        );
-      }
-
-      alert(
-        editingId
-          ? "Gallery image updated successfully."
-          : "Gallery image uploaded successfully."
-      );
-
-      resetForm();
-      await fetchData();
-    } catch (error) {
-      console.error(error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Unable to save gallery image."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEdit = (item: GalleryImage) => {
-    setEditingId(item._id);
-    setForm({
-      title: item.title,
-      year: item.year || String(new Date().getFullYear()),
-      category: item.category,
+    const res = await fetch(url, {
+      method: editingId ? "PUT" : "POST",
+      body: formData,
     });
 
-    setImage(null);
+    const result = await res.json();
 
-    if (fileRef.current) {
-      fileRef.current.value = "";
+    if (!res.ok) {
+      throw new Error(result.message || "Unable to save images.");
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    alert(
+      editingId
+        ? "Gallery image updated successfully."
+        : `${result.data?.length ?? images.length} image(s) uploaded successfully.`
+    );
+
+    resetForm();
+    await fetchData();
+  } catch (error) {
+    console.error(error);
+    alert(error instanceof Error ? error.message : "Unable to save images.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const handleEdit = (item: GalleryImage) => {
+  setEditingId(item._id);
+
+  setForm({
+    title: item.title,
+    year: item.year || String(new Date().getFullYear()),
+    category: item.category,
+  });
+
+  setImages([]);
+
+  if (fileRef.current) {
+    fileRef.current.value = "";
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm(
@@ -318,36 +314,37 @@ export default function AdminGallery() {
 
             {/* Image upload */}
             <div>
-              <label
-                htmlFor="gallery-image"
-                className="mb-2 block font-semibold text-gray-700"
-              >
-                Gallery Image
-                {editingId && (
-                  <span className="ml-2 text-xs font-normal text-gray-500">
-                    (Optional when editing)
-                  </span>
-                )}
-              </label>
-
-              <input
-                ref={fileRef}
-                id="gallery-image"
-                type="file"
-                accept="image/*"
-                required={!editingId}
-                onChange={(e) =>
-                  setImage(e.target.files?.[0] || null)
-                }
-                className="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
-              />
-
-              {image && (
-                <p className="mt-2 break-all text-xs text-green-700">
-                  Selected: {image.name}
-                </p>
+            <label
+              htmlFor="gallery-image"
+              className="mb-2 block font-semibold text-gray-700"
+            >
+              Gallery Images
+              {editingId && (
+                <span className="ml-2 text-xs font-normal text-gray-500">
+                  (Choose one replacement image, or leave empty)
+                </span>
               )}
-            </div>
+            </label>
+          
+            <input
+              ref={fileRef}
+              id="gallery-image"
+              type="file"
+              accept="image/*"
+              multiple={!editingId}
+              required={!editingId}
+              onChange={(e) => {
+                setImages(Array.from(e.target.files || []));
+              }}
+              className="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-700"
+            />
+          
+            {images.length > 0 && (
+              <p className="mt-2 text-sm text-green-700">
+                {images.length} image(s) selected
+              </p>
+            )}
+          </div>
 
             {/* Submit */}
             <div className="flex flex-wrap gap-3 pt-2 sm:col-span-2">
