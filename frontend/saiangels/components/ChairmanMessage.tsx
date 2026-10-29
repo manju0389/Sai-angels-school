@@ -79,7 +79,7 @@ export default function ChairmanMessage() {
                 </p>
               </div>
 
-              <div className="mt-6 space-y-4 text-justify text-sm leading-8 text-slate-600 sm:text-base">
+              <div className="mt-6 text-justify space-y-6 text-base leading-8 text-slate-600">
                 <p>
                   At Sai Angels Schools, we believe every child has unique
                   potential waiting to be discovered. Our vision is to create
