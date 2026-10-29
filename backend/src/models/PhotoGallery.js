@@ -8,20 +8,23 @@ const photoGallerySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    year: {
-      type: Number,
-      required: true,
-      min: 2000,
-      max: 2100,
-    },
     category: {
       type: String,
       required: true,
       trim: true,
     },
+    year: {
+      type: String,
+      required: true,
+      match: /^\d{4}$/,
+    },
     image: {
       type: String,
       required: true,
+    },
+    public_id: {
+      type: String,
+      default: "",
     },
   },
   {
@@ -34,3 +37,4 @@ const PhotoGallery =
   mongoose.model("PhotoGallery", photoGallerySchema);
 
 export default PhotoGallery;
+
