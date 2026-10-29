@@ -45,20 +45,20 @@ export default function TransportPage() {
 
         <div className="text-justify">
           {/* Introduction */}
-          <p className="mb-6 text-base leading-7 text-gray-800">
+          <p className="mb-6 space-y-6 text-base leading-8 text-slate-600">
             When it comes to day scholars' transportation and mid-day meal, we heavily lean on Prashanthi 
             Transport and Food Services, as they are trusted and time tested partner for us.
           </p>
 
           {/* Safety Information */}
-          <p className="mb-6 text-base leading-7 text-gray-800">
+          <p className="mb-6 space-y-6 text-base leading-8 text-slate-600">
             They ensure safe travel for students, offering well maintained and comfortable conveyance 
             with highly experienced and responsible staff at their service. The staff adheres to the duty 
             roster outlined by the management under all circumstances.
           </p>
 
           {/* Food Services Information */}
-          <p className="mb-6 text-base leading-7 text-gray-800">
+          <p className="mb-6 space-y-6 text-base leading-8 text-slate-600">
             To this present now, there has never been any compromising on food quality that is provided 
             as buffet, priced for very reasonable and affordable sum. Kitchen hygiene has always been a 
             prime concern. Food grains, beans, lentils, vegetables and other ingredients are freshly 
