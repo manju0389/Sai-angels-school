@@ -97,7 +97,7 @@ export default function PrincipalPage() {
                   </div>
 
                   {/* Principal Description */}
-                  <div className="text-slate-600 text-base md:text-lg leading-8 space-y-5">
+                  <div className="md:text-lg space-y-6 text-base leading-8 text-slate-600">
                     {principal.description
                       ?.split(/\n\s*\n/)
                       .map((paragraph, index) => (
