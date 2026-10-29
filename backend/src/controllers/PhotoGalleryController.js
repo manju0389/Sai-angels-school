@@ -1,15 +1,19 @@
+
 import PhotoGallery from "../models/PhotoGallery.js";
 import cloudinary from "../config/cloudinary.js";
 
-// Get all photos
-export const getPhotos = async (req, res) => {
+// Get all photos: newest year first, then newest upload first
+export const getPhotoGallery = async (req, res) => {
   try {
-    // Fetch all photos and sort by latest uploads
-    const photos = await PhotoGallery.find().sort({ createdAt: -1 });
+    const images = await PhotoGallery.find().sort({
+      year: -1,
+      createdAt: -1,
+      _id: -1,
+    });
 
     res.status(200).json({
       success: true,
-      data: photos,
+      data: images,
     });
   } catch (error) {
     res.status(500).json({
@@ -19,10 +23,9 @@ export const getPhotos = async (req, res) => {
   }
 };
 
-// Get single photo by ID
+// Get one photo
 export const getPhoto = async (req, res) => {
   try {
-    // Find photo using MongoDB ID
     const photo = await PhotoGallery.findById(req.params.id);
 
     if (!photo) {
@@ -32,7 +35,7 @@ export const getPhoto = async (req, res) => {
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: photo,
     });
@@ -44,10 +47,25 @@ export const getPhoto = async (req, res) => {
   }
 };
 
-// Create new photo
+// Upload a new photo with its manually selected year
 export const createPhoto = async (req, res) => {
   try {
-    // Check if image file exists
+    const { title, category, year } = req.body;
+
+    if (!title?.trim() || !category?.trim() || !year) {
+      return res.status(400).json({
+        success: false,
+        message: "Title, category, and year are required",
+      });
+    }
+
+    if (!/^\d{4}$/.test(String(year))) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a valid four-digit year",
+      });
+    }
+
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -55,10 +73,10 @@ export const createPhoto = async (req, res) => {
       });
     }
 
-    // Save photo details in database
     const photo = await PhotoGallery.create({
-      title: req.body.title,
-      category: req.body.category,
+      title: title.trim(),
+      category: category.trim(),
+      year: String(year),
       image: req.file.path,
       public_id: req.file.filename,
     });
@@ -68,8 +86,6 @@ export const createPhoto = async (req, res) => {
       data: photo,
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
@@ -77,36 +93,76 @@ export const createPhoto = async (req, res) => {
   }
 };
 
-// Update existing photo
+// Update title, category, year, and optionally image
 export const updatePhoto = async (req, res) => {
   try {
-    // Fields that can be updated
-    const updateData = {
-      title: req.body.title,
-      category: req.body.category,
-    };
+    const { title, category, year } = req.body;
 
-    // Update image details if a new image is uploaded
-    if (req.file) {
-      updateData.image = req.file.path;
-      updateData.public_id = req.file.filename;
+    const updateData = {};
+
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Title is required",
+        });
+      }
+
+      updateData.title = title.trim();
     }
 
-    // Find and update photo
-    const photo = await PhotoGallery.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    if (category !== undefined) {
+      if (!category.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Category is required",
+        });
+      }
 
-    if (!photo) {
+      updateData.category = category.trim();
+    }
+
+    if (year !== undefined) {
+      if (!/^\d{4}$/.test(String(year))) {
+        return res.status(400).json({
+          success: false,
+          message: "Please select a valid four-digit year",
+        });
+      }
+
+      updateData.year = String(year);
+    }
+
+    const existingPhoto = await PhotoGallery.findById(req.params.id);
+
+    if (!existingPhoto) {
       return res.status(404).json({
         success: false,
         message: "Photo not found",
       });
     }
 
-    res.json({
+    if (req.file) {
+      updateData.image = req.file.path;
+      updateData.public_id = req.file.filename;
+    }
+
+    const photo = await PhotoGallery.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    // Delete the previous Cloudinary image after a successful update.
+    if (req.file && existingPhoto.public_id) {
+      try {
+        await cloudinary.uploader.destroy(existingPhoto.public_id);
+      } catch (cloudinaryError) {
+        console.error("Old Cloudinary image cleanup failed:", cloudinaryError);
+      }
+    }
+
+    res.status(200).json({
       success: true,
       data: photo,
     });
@@ -118,10 +174,9 @@ export const updatePhoto = async (req, res) => {
   }
 };
 
-// Delete photo
+// Delete a photo
 export const deletePhoto = async (req, res) => {
   try {
-    // Find photo before deleting
     const photo = await PhotoGallery.findById(req.params.id);
 
     if (!photo) {
@@ -131,21 +186,17 @@ export const deletePhoto = async (req, res) => {
       });
     }
 
-    // Delete image from Cloudinary
     if (photo.public_id) {
       await cloudinary.uploader.destroy(photo.public_id);
     }
 
-    // Delete photo record from MongoDB
     await PhotoGallery.findByIdAndDelete(req.params.id);
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Photo deleted successfully",
     });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
