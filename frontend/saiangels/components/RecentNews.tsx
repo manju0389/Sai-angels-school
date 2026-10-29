@@ -121,7 +121,7 @@ export default function RecentNews() {
 
                       </h4>
 
-                      <p className="mt-2 text-xs leading-6 text-slate-600 sm:text-sm">
+                      <p className="mt-2 text-xs text-slate-600 sm:text-sm space-y-6 text-base leading-8">
                         {news.description}
                       </p>
 
