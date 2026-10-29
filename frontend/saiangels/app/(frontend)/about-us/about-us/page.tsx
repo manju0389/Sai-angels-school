@@ -148,7 +148,7 @@ export default function AboutPage() {
                   {title}
                 </h3>
 
-                <p className="mt-3 text-justify text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-justify text-sm leading-8 text-slate-600 space-y-6">
                   {description}
                 </p>
               </article>
