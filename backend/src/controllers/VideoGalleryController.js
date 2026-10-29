@@ -4,7 +4,7 @@ import VideoGallery from "../models/VideoGallery.js";
 // Get all video gallery items, newest first
 export const getVideoGallery = async (req, res) => {
   try {
-    const videos = await VideoGallery.find().sort({ createdAt: -1 });
+    const videos = await VideoGallery.find().sort({ createdAt: 1 });
     res.status(200).json(videos);
   } catch (error) {
     res.status(500).json({ message: error.message });
