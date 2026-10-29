@@ -48,6 +48,7 @@ export const getPhoto = async (req, res) => {
 };
 
 // Upload a new photo with its manually selected year
+
 export const createPhoto = async (req, res) => {
   try {
     const { title, category, year } = req.body;
@@ -62,36 +63,42 @@ export const createPhoto = async (req, res) => {
     if (!/^\d{4}$/.test(String(year))) {
       return res.status(400).json({
         success: false,
-        message: "Please select a valid four-digit year",
+        message: "Please enter a valid four-digit year",
       });
     }
 
-    if (!req.file) {
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Image required",
+        message: "Please upload at least one image",
       });
     }
 
-    const photo = await PhotoGallery.create({
-      title: title.trim(),
-      category: category.trim(),
-      year: String(year),
-      image: req.file.path,
-      public_id: req.file.filename,
-    });
+    const photos = await PhotoGallery.insertMany(
+      req.files.map((file) => ({
+        title: title.trim(),
+        category: category.trim(),
+        year: String(year),
+        image: file.path,
+        public_id: file.filename,
+      }))
+    );
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      data: photo,
+      message: "Gallery images uploaded successfully",
+      data: photos,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Gallery upload error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 // Update title, category, year, and optionally image
 export const updatePhoto = async (req, res) => {
