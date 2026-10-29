@@ -19,10 +19,11 @@ router.get("/", getPhotoGallery);
 router.get("/:id", getPhoto);
 
 // Upload an image with title, category, and year
-router.post("/", upload.single("image"), createPhoto);
+router.post("/", upload.array("images", 20), createPhoto);
+
 
 // Update title, category, year, and optionally the image
-router.put("/:id", upload.single("image"), updatePhoto);
+router.put("/:id", upload.single("images"), updatePhoto);
 
 // Delete image from Cloudinary and MongoDB
 router.delete("/:id", deletePhoto);
