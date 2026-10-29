@@ -213,7 +213,7 @@ export default function ChairmanMessage() {
                   {item.subtitle}
                 </h4>
 
-                <p className="mt-4 space-y-6 text-base leading-8 text-slate-600">
+                <p className="mt-4 mb-5 space-y-6 text-base leading-8 text-slate-600">
                   {item.description}
                 </p>
 
