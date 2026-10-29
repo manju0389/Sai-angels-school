@@ -35,7 +35,11 @@ export default function HomeVideoPage() {
     revalidateOnReconnect: true,
   });
 
-  const getEmbedUrl = (url: string) => {
+  // Display only the first 4 videos returned by the API
+  const displayedVideos = videos.slice(0, 4);
+
+  // Convert supported YouTube URLs into embed URLs
+  const getEmbedUrl = (url: string): string => {
     if (!url) return "";
 
     try {
@@ -61,14 +65,13 @@ export default function HomeVideoPage() {
         }
       }
 
-      return id ? `https://www.youtube.com/embed/${id}` : "";
+      return id
+        ? `https://www.youtube.com/embed/${id}`
+        : "";
     } catch {
       return "";
     }
   };
-
-  // Display only four videos on the homepage
-  const displayedVideos = videos.slice(0, 4);
 
   return (
     <main className="bg-[#f38030] py-16 sm:py-14">
@@ -77,7 +80,7 @@ export default function HomeVideoPage() {
         <div className="text-center">
           <h2 className="pb-4 text-3xl font-extrabold leading-tight text-[#cfcfcf] sm:text-4xl lg:text-5xl">
             Our Video{" "}
-            <span className="text-[#fff]">Gallery</span>
+            <span className="text-white">Gallery</span>
           </h2>
 
           <div className="mx-auto mt-5 h-1.5 w-20 rounded-full bg-amber-400" />
@@ -85,76 +88,86 @@ export default function HomeVideoPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="py-12 text-center text-gray-600">
+          <div className="py-12 text-center text-gray-700">
             Loading videos...
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="py-12 text-center text-red-600">
+          <div className="py-12 text-center text-red-700">
             Unable to load videos. Please try again later.
           </div>
         )}
 
+        {/* Video Gallery */}
         {!isLoading && !error && (
           <>
-            {/* Display the saved video records */}
             <section className="container mx-auto px-4 py-10">
               {displayedVideos.length === 0 ? (
-                <div className="text-center text-gray-500 text-lg">
+                <div className="py-8 text-center text-lg text-gray-700">
                   No Videos Available
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {displayedVideos.map((video) => (
-                    <div
-                      key={video._id}
-                      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
-                    >
-                      {/* Embedded YouTube player */}
-                      <div className="aspect-video w-full">
-                        <iframe
-                          className="w-full h-full"
-                          src={getEmbedUrl(video.url)}
-                          title={video.title}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          loading="lazy"
-                        />
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {displayedVideos.map((video) => {
+                    const embedUrl = getEmbedUrl(video.url);
+
+                    return (
+                      <div
+                        key={video._id}
+                        className="overflow-hidden rounded-xl bg-white shadow-md transition hover:shadow-xl"
+                      >
+                        {/* Embedded YouTube Player */}
+                        <div className="aspect-video w-full bg-gray-200">
+                          {embedUrl ? (
+                            <iframe
+                              className="h-full w-full"
+                              src={embedUrl}
+                              title={video.title}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-gray-600">
+                              Invalid video URL
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Video Details */}
+                        <div className="p-4">
+                          <p className="text-sm text-gray-500">
+                            📅 {video.date}
+                          </p>
+
+                          <h3 className="mt-1 text-lg font-semibold text-gray-800">
+                            {video.title}
+                          </h3>
+
+                          <a
+                            href={video.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-3 block w-full rounded-lg bg-red-600 py-2 text-center text-white transition hover:bg-red-700"
+                          >
+                            Watch Video ▶
+                          </a>
+                        </div>
                       </div>
-
-                      {/* Video title, date, and original YouTube link */}
-                      <div className="p-4">
-                        <p className="text-sm text-gray-500">
-                          📅 {video.date}
-                        </p>
-
-                        <h3 className="text-lg font-semibold text-gray-800 mt-1">
-                          {video.title}
-                        </h3>
-
-                        <a
-                          href={video.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block mt-3 w-full bg-red-600 hover:bg-red-700 text-white text-center py-2 rounded-lg transition cursor-pointer"
-                        >
-                          Watch Video ▶
-                        </a>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>
 
-            {/* View More Button */}
+            {/* View More Videos Button */}
             {videos.length > 0 && (
               <div className="text-center">
                 <Link
                   href="/gallery/video-gallery"
-                  className="inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-[#07204f] px-5 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:shadow-lg"
+                  className="inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-[#07204f] px-5 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-white hover:text-red-600 hover:shadow-lg"
                 >
                   View More Videos
                   <span className="text-lg" aria-hidden="true">
