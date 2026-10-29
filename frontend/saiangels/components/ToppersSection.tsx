@@ -69,9 +69,7 @@ export default function ToppersSection() {
           </h2>
 
           <p className="mx-auto mt-4 max-w-3xl text-sm leading-6 text-white/95 sm:text-base">
-            Discover the achievements of our students across SSLC. With dedicated academic support and
-            focused entrance-exam preparation, Sri Sai Angels PU College
-            helps students build a strong foundation for higher education.
+            Discover the achievements of our students across SSLC With dedicated academic support
           </p>
         </div>
 
