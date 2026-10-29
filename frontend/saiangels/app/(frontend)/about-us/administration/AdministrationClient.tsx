@@ -107,7 +107,7 @@ export default function AdministrationPage() {
 
                         {/* Feature name */}
                         <div className="min-w-0 flex-1 pt-1">
-                          <p className="text-sm font-medium leading-6 text-gray-700 sm:text-base">
+                          <p className="text-sm leading-7 text-gray-700 sm:text-base">
                             {item.facility}
                           </p>
                         </div>
