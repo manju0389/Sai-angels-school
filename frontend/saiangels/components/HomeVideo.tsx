@@ -5,11 +5,12 @@ import useSWR from "swr";
 import Link from "next/link";
 
 interface Video {
-  _id: string;
+ _id: string;
   year: string;
   title: string;
   url: string;
   date: string;
+  createdAt?: string;
 }
 
 const fetcher = async (url: string): Promise<Video[]> => {
@@ -35,13 +36,14 @@ export default function HomeVideoPage() {
     revalidateOnReconnect: true,
   });
 
-  // Display only the 3 latest uploaded videos
-const displayedVideos = [...videos]
-  .sort(
-    (a, b) =>
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
-  .slice(0, 3);
+  // Display the 3 most recently uploaded videos
+  const displayedVideos = [...videos]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt || 0).getTime() -
+        new Date(a.createdAt || 0).getTime()
+    )
+    .slice(0, 3);
 
   // Convert supported YouTube URLs into embed URLs
   const getEmbedUrl = (url: string): string => {
