@@ -35,8 +35,13 @@ export default function HomeVideoPage() {
     revalidateOnReconnect: true,
   });
 
-  // Display only the first 4 videos returned by the API
-  const displayedVideos = videos.slice(0, 4);
+  // Display only the 3 latest uploaded videos
+const displayedVideos = [...videos]
+  .sort(
+    (a, b) =>
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+  .slice(0, 3);
 
   // Convert supported YouTube URLs into embed URLs
   const getEmbedUrl = (url: string): string => {
