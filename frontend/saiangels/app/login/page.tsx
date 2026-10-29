@@ -21,33 +21,34 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(
+        /\/+$/,
+        ""
+      );
 
       if (!apiUrl) {
         setError("Backend URL is not configured.");
         return;
       }
 
-      const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      username: username.trim(),
-      password,
-    }),
-  }
-);
+      const response = await fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: username.trim(),
+          password,
+        }),
+      });
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         setError(
-          data.message || `Login failed. HTTP status: ${response.status}`
+          data.message ||
+            `Login failed. HTTP status: ${response.status}`
         );
         return;
       }
@@ -86,18 +87,20 @@ export default function AdminLoginPage() {
               htmlFor="username"
               className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              Admin Email
+              Username
             </label>
 
             <input
               id="username"
               name="username"
-              type="email"
+              type="text"
               autoComplete="username"
               required
               value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your admin email"
+              onChange={(event) =>
+                setUsername(event.target.value)
+              }
+              placeholder="Enter your username"
               className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
           </div>
@@ -117,7 +120,9 @@ export default function AdminLoginPage() {
               autoComplete="current-password"
               required
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
               placeholder="Enter your password"
               className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
@@ -136,7 +141,10 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <p role="alert" className="text-sm text-red-600">
+            <p
+              role="alert"
+              className="text-sm text-red-600"
+            >
               {error}
             </p>
           )}
