@@ -251,7 +251,7 @@ export default function AmenitiesSection() {
                     {item.title}
                   </h3>
 
-                  <p className="flex-grow text-sm leading-7 text-slate-600">
+                  <p className="flex-grow space-y-6 text-base leading-8 text-slate-600">
                     {item.description}
                   </p>
 
