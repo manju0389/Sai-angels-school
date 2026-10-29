@@ -52,7 +52,7 @@ export default function HistoryPage() {
           {/* Main Content */}
           <article className="min-w-0 space-y-6 lg:col-span-2">
             {historyParagraphs.map((paragraph, index) => (
-              <p key={index} className="text-justify text-base leading-8 text-slate-600" >
+              <p key={index} className="text-justify space-y-6 text-base leading-8 text-slate-600" >
                 {paragraph}
               </p>
             ))}
