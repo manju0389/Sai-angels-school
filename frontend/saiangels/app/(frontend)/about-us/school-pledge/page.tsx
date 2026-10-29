@@ -64,7 +64,7 @@ export default function PledgePage() {
                 National Pledge
               </h2>
 
-              <div className="space-y-3 text-base font-medium leading-8 sm:text-lg sm:leading-9">
+              <div className="space-y-2 text-sm font-semibold leading-7 sm:text-base sm:leading-8">
                 {pledgeLines.map((line, index) => (
                   <p key={index}>{line}</p>
                 ))}
