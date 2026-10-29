@@ -92,7 +92,7 @@ const AcademicPrograms = () => {
                 </p>
 
                 {/* Description */}
-                <p className="mt-5 flex-grow text-sm leading-7 text-slate-600 sm:text-base">
+                <p className="mt-5 flex-grow text-sm space-y-6 text-base leading-8 text-slate-600">
                   {program.description}
                 </p>
 
