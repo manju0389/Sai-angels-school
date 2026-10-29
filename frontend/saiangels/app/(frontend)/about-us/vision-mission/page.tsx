@@ -121,7 +121,7 @@ export default function VisionPage() {
               Building a brighter future through meaningful education
             </h2>
 
-            <div className="mt-6 space-y-5 text-justify text-base leading-8 text-slate-600">
+            <div className="mt-6 space-y-6 text-justify text-base leading-8 text-slate-600">
               <p>
                 At Sai Angels School, our mission is guided by a commitment to empower young minds and 
                 help every student work towards their aspirations. We strive to provide quality 
@@ -192,7 +192,7 @@ export default function VisionPage() {
                 Inspiring tomorrow&apos;s leaders
               </h3>
 
-              <p className="mt-5 leading-8 text-slate-600">
+              <p className="mt-5 leading-8 text-slate-600 space-y-6">
                 To nurture knowledgeable, confident and compassionate individuals who think 
                 independently, uphold strong values and contribute meaningfully to their communities  and the wider world.
               </p>
@@ -211,7 +211,7 @@ export default function VisionPage() {
                 Empowering every learner
               </h3>
 
-              <p className="mt-5 leading-8 text-slate-600">
+              <p className="mt-5 leading-8 text-slate-600 space-y-6">
                 To provide meaningful educational experiences that encourage academic excellence, 
                 discipline, creativity, personal growth and a lifelong commitment to learning and service.
               </p>
@@ -261,7 +261,7 @@ export default function VisionPage() {
                   {value.subtitle}
                 </p>
 
-                <p className="mt-5 leading-7 text-slate-600">
+                <p className="mt-5 leading-8 space-y-6 text-slate-600">
                   {value.description}
                 </p>
 
