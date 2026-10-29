@@ -202,7 +202,7 @@ export default function ChairmanMessage() {
                   <Icon className={`text-4xl ${item.iconColor}`} />
                 </div>
 
-                <h3 className="text-2xl font-extrabold text-blue-950 sm:text-3xl">
+                <h3 className="text-2xl font-semibold text-[#102c50] sm:text-3xl">
                   {item.title}
                 </h3>
               </div>
@@ -213,7 +213,7 @@ export default function ChairmanMessage() {
                   {item.subtitle}
                 </h4>
 
-                <p className="mt-4 text-base leading-7 text-slate-700">
+                <p className="mt-4 space-y-6 text-base leading-8 text-slate-600">
                   {item.description}
                 </p>
 
