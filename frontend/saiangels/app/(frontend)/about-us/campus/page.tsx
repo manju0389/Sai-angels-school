@@ -144,7 +144,7 @@ function CampusSection({
         {title}
       </h2>
 
-      <div className="space-y-4 text-justify text-base leading-8 text-slate-600">
+      <div className="text-justify space-y-6 text-base leading-8 text-slate-600">
         {paragraphs.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
