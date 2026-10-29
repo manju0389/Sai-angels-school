@@ -6,52 +6,56 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface GalleryImage {
   _id: string;
   title: string;
-  year: number;
   category: string;
+  year: string;
   image: string;
-  createdAt?: string;
 }
 
-const CATEGORIES = [
-  "Sai Angels School",
-  "Little Sai Angels",
-  "Sai Cherubs",
-  "Sai Boarding Home",
-];
+interface GalleryForm {
+  title: string;
+  category: string;
+  year: string;
+}
 
-const YEARS = Array.from(
-  { length: 11 },
-  (_, index) => new Date().getFullYear() - index
-);
+const EMPTY_FORM: GalleryForm = {
+  title: "",
+  category: "",
+  year: String(new Date().getFullYear()),
+};
 
 export default function AdminGallery() {
   const API = `${process.env.NEXT_PUBLIC_API_URL}/admin/PhotoGallery`;
 
-  const [title, setTitle] = useState("");
-  const [year, setYear] = useState(String(new Date().getFullYear()));
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [form, setForm] = useState<GalleryForm>({ ...EMPTY_FORM });
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [error, setError] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState("");
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
+      setFetching(true);
+
       const res = await fetch(API);
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message || "Failed to load gallery");
+        throw new Error(result.message || "Unable to load gallery");
       }
 
-      setPreview(Array.isArray(result) ? result : result.data || []);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to load gallery"
+      setPreview(result.data || []);
+      setErrorMessage("");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to load gallery"
       );
+    } finally {
+      setFetching(false);
     }
   }, [API]);
 
@@ -59,65 +63,110 @@ export default function AdminGallery() {
     void fetchData();
   }, [fetchData]);
 
+  const resetForm = () => {
+    setForm({ ...EMPTY_FORM });
+    setImage(null);
+    setEditingId(null);
+
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+
   const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (loading) return;
 
-    if (!title.trim() || !year || !category || !image) {
-      setError("Please fill in all fields and choose an image.");
+    if (!form.title.trim() || !form.category.trim() || !form.year.trim()) {
+      alert("Please enter the title, year, and category.");
+      return;
+    }
+
+    if (!/^\d{4}$/.test(form.year.trim())) {
+      alert("Please enter a valid four-digit year.");
+      return;
+    }
+
+    if (!editingId && !image) {
+      alert("Please choose an image to upload.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("title", title.trim());
-    formData.append("year", year);
-    formData.append("category", category);
-    formData.append("image", image);
-    formData.append("folder", "Gallery");
+    formData.append("title", form.title.trim());
+    formData.append("year", form.year.trim());
+    formData.append("category", form.category.trim());
+
+    if (image) {
+      formData.append("image", image);
+    }
 
     try {
       setLoading(true);
-      setError("");
 
-      const res = await fetch(API, {
-        method: "POST",
+      const url = editingId ? `${API}/${editingId}` : API;
+
+      const res = await fetch(url, {
+        method: editingId ? "PUT" : "POST",
         body: formData,
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message || "Upload failed");
+        throw new Error(
+          result.message ||
+            (editingId ? "Update failed" : "Upload failed")
+        );
       }
 
-      setTitle("");
-      setYear(String(new Date().getFullYear()));
-      setCategory(CATEGORIES[0]);
-      setImage(null);
+      alert(
+        editingId
+          ? "Gallery image updated successfully."
+          : "Gallery image uploaded successfully."
+      );
 
-      if (fileRef.current) {
-        fileRef.current.value = "";
-      }
-
+      resetForm();
       await fetchData();
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Upload failed"
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Unable to save gallery image."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteImage = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this image?")) {
-      return;
+  const handleEdit = (item: GalleryImage) => {
+    setEditingId(item._id);
+    setForm({
+      title: item.title,
+      year: item.year || String(new Date().getFullYear()),
+      category: item.category,
+    });
+
+    setImage(null);
+
+    if (fileRef.current) {
+      fileRef.current.value = "";
     }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this gallery image? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
 
     try {
       setDeletingId(id);
-      setError("");
 
       const res = await fetch(`${API}/${id}`, {
         method: "DELETE",
@@ -132,9 +181,16 @@ export default function AdminGallery() {
       setPreview((previous) =>
         previous.filter((item) => item._id !== id)
       );
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Delete failed"
+
+      if (editingId === id) {
+        resetForm();
+      }
+
+      alert("Gallery image deleted successfully.");
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error ? error.message : "Unable to delete image."
       );
     } finally {
       setDeletingId(null);
@@ -142,156 +198,315 @@ export default function AdminGallery() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-4 sm:p-8">
-      <div className="rounded-xl border bg-white p-5 shadow-lg sm:p-8">
-        <h2 className="mb-6 text-2xl font-bold text-gray-800">
-          Upload Gallery Image
-        </h2>
+    <main className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl">
+        {/* Page heading */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Photo Gallery Management
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Add your own gallery years and categories, upload images, and
+            manage existing records.
+          </p>
+        </div>
 
-        <form onSubmit={handleSave} className="grid gap-5">
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Image Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter image title"
-              required
-              className="w-full rounded-lg border border-gray-300 p-3"
-            />
+        {/* Add / Edit form */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+              {editingId ? "Edit Gallery Image" : "Add Gallery Image"}
+            </h2>
+
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+              >
+                Cancel Edit
+              </button>
+            )}
           </div>
 
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Year
-            </label>
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3"
-              required
-            >
-              {YEARS.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+          <form onSubmit={handleSave} className="grid gap-5 sm:grid-cols-2">
+            {/* Image title */}
+            <div>
+              <label
+                htmlFor="gallery-title"
+                className="mb-2 block font-semibold text-gray-700"
+              >
+                Image Title
+              </label>
+
+              <input
+                id="gallery-title"
+                type="text"
+                value={form.title}
+                onChange={(e) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    title: e.target.value,
+                  }))
+                }
+                placeholder="Example: Annual Day Celebration"
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+
+            {/* Custom year */}
+            <div>
+              <label
+                htmlFor="gallery-year"
+                className="mb-2 block font-semibold text-gray-700"
+              >
+                Gallery Year
+              </label>
+
+              <input
+                id="gallery-year"
+                type="number"
+                value={form.year}
+                onChange={(e) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    year: e.target.value,
+                  }))
+                }
+                placeholder="Example: 2027"
+                min="1000"
+                max="9999"
+                step="1"
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+
+              <p className="mt-1 text-xs text-gray-500">
+                Enter any four-digit gallery year.
+              </p>
+            </div>
+
+            {/* Custom category */}
+            <div>
+              <label
+                htmlFor="gallery-category"
+                className="mb-2 block font-semibold text-gray-700"
+              >
+                Gallery Category
+              </label>
+
+              <input
+                id="gallery-category"
+                type="text"
+                value={form.category}
+                onChange={(e) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    category: e.target.value,
+                  }))
+                }
+                placeholder="Example: Sports Day"
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+
+              <p className="mt-1 text-xs text-gray-500">
+                Enter any category name you want.
+              </p>
+            </div>
+
+            {/* Image upload */}
+            <div>
+              <label
+                htmlFor="gallery-image"
+                className="mb-2 block font-semibold text-gray-700"
+              >
+                Gallery Image
+                {editingId && (
+                  <span className="ml-2 text-xs font-normal text-gray-500">
+                    (Optional when editing)
+                  </span>
+                )}
+              </label>
+
+              <input
+                ref={fileRef}
+                id="gallery-image"
+                type="file"
+                accept="image/*"
+                required={!editingId}
+                onChange={(e) =>
+                  setImage(e.target.files?.[0] || null)
+                }
+                className="block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+              />
+
+              {image && (
+                <p className="mt-2 break-all text-xs text-green-700">
+                  Selected: {image.name}
+                </p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <div className="flex flex-wrap gap-3 pt-2 sm:col-span-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {loading
+                  ? "Please wait..."
+                  : editingId
+                    ? "Save Changes"
+                    : "Upload Image"}
+              </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  disabled={loading}
+                  className="rounded-lg bg-gray-200 px-6 py-3 font-semibold text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        {/* Preview table */}
+        <section className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b p-5 sm:p-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
+                Gallery Preview
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                All uploaded gallery images
+              </p>
+            </div>
+
+            <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+              {preview.length} images
+            </span>
           </div>
 
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3"
-              required
-            >
-              {CATEGORIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Upload Image
-            </label>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              required
-              onChange={(e) =>
-                setImage(e.target.files?.[0] || null)
-              }
-              className="block w-full cursor-pointer text-sm"
-            />
-          </div>
-
-          {error && (
-            <p role="alert" className="text-sm text-red-600">
-              {error}
-            </p>
+          {errorMessage && (
+            <div className="m-5 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+              {errorMessage}
+              <button
+                type="button"
+                onClick={() => void fetchData()}
+                className="ml-3 font-semibold underline"
+              >
+                Retry
+              </button>
+            </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400 sm:w-fit"
-          >
-            {loading ? "Uploading..." : "Upload Image"}
-          </button>
-        </form>
-      </div>
-
-      <div className="mt-10 overflow-hidden rounded-xl border bg-white shadow-lg">
-        <div className="border-b px-6 py-4">
-          <h3 className="text-xl font-semibold">Gallery Preview</h3>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-[#10458e] text-white">
-                <th className="p-3 text-left">#</th>
-                <th className="p-3 text-left">Image</th>
-                <th className="p-3 text-left">Title</th>
-                <th className="p-3 text-left">Year</th>
-                <th className="p-3 text-left">Category</th>
-                <th className="p-3 text-left">Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {preview.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="py-8 text-center text-gray-500"
-                  >
-                    No images uploaded
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[850px] border-collapse">
+              <thead>
+                <tr className="bg-[#10458e] text-left text-white">
+                  <th className="p-4">#</th>
+                  <th className="p-4">Image</th>
+                  <th className="p-4">Title</th>
+                  <th className="p-4">Year</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4">Actions</th>
                 </tr>
-              ) : (
-                preview.map((item, index) => (
-                  <tr key={item._id} className="border-t">
-                    <td className="p-3">{index + 1}</td>
-                    <td className="p-3">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="h-20 w-20 rounded-lg border object-cover"
-                      />
-                    </td>
-                    <td className="p-3">{item.title}</td>
-                    <td className="p-3">{item.year}</td>
-                    <td className="p-3">{item.category}</td>
-                    <td className="p-3">
-                      <button
-                        type="button"
-                        onClick={() => deleteImage(item._id)}
-                        disabled={deletingId === item._id}
-                        className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
-                      >
-                        {deletingId === item._id
-                          ? "Deleting..."
-                          : "Delete"}
-                      </button>
+              </thead>
+
+              <tbody>
+                {fetching ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="p-10 text-center text-gray-500"
+                    >
+                      Loading gallery images...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : preview.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="p-10 text-center text-gray-500"
+                    >
+                      No gallery images uploaded yet.
+                    </td>
+                  </tr>
+                ) : (
+                  preview.map((item, index) => (
+                    <tr
+                      key={item._id}
+                      className={`border-b border-gray-200 transition hover:bg-blue-50/50 ${
+                        editingId === item._id ? "bg-blue-50" : ""
+                      }`}
+                    >
+                      <td className="p-4 text-gray-600">{index + 1}</td>
+
+                      <td className="p-4">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          loading="lazy"
+                          className="h-20 w-28 rounded-lg border border-gray-200 object-cover"
+                        />
+                      </td>
+
+                      <td className="max-w-xs p-4 font-medium text-gray-800">
+                        {item.title}
+                      </td>
+
+                      <td className="p-4">
+                        <span className="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-700">
+                          {item.year || "Not assigned"}
+                        </span>
+                      </td>
+
+                      <td className="p-4">
+                        <span className="rounded-md bg-gray-100 px-3 py-1 text-sm text-gray-700">
+                          {item.category}
+                        </span>
+                      </td>
+
+                      <td className="p-4">
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(item)}
+                            disabled={loading || deletingId === item._id}
+                            className="rounded-lg bg-amber-500 px-4 py-2 cursor-pointer text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => void handleDelete(item._id)}
+                            disabled={
+                              deletingId === item._id || loading
+                            }
+                            className="rounded-lg bg-red-600 px-4 cursor-pointer py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {deletingId === item._id
+                              ? "Deleting..."
+                              : "Delete"}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
