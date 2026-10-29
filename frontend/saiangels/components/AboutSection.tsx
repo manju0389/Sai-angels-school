@@ -85,7 +85,7 @@ export default function AboutSection() {
               </span>
             </h2>
 
-            <p className="mb-5 text-base leading-8 text-slate-600 text-justify">
+            <p className="mb-5 text-justify space-y-6 text-base leading-8 text-slate-600">
               Sai Angels is committed to serving society in an environment dedicated to student success. 
               The Institution has always focused on educational excellence and the quality of education 
               among the students. The institution strives to promote in young minds a sense of 
