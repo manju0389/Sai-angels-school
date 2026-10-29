@@ -218,7 +218,7 @@ const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
               <button
                 type="button"
                 onClick={resetForm}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+                className="rounded-lg border cursor-pointer border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
               >
                 Cancel Edit
               </button>
@@ -351,7 +351,7 @@ const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg bg-blue-600 cursor-pointer px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading
                   ? "Please wait..."
@@ -365,7 +365,7 @@ const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
                   type="button"
                   onClick={resetForm}
                   disabled={loading}
-                  className="rounded-lg bg-gray-200 px-6 py-3 font-semibold text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+                  className="rounded-lg bg-gray-200 px-6 py-3 cursor-pointer font-semibold text-gray-800 hover:bg-gray-300 disabled:opacity-50"
                 >
                   Cancel
                 </button>
