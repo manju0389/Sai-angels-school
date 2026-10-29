@@ -48,7 +48,7 @@ export default function AdmissionPage() {
               Guidelines for Admission to School
             </h2>
 
-            <ul className="mb-8 list-disc space-y-3 pl-6 text-gray-700">
+            <ul className="mb-8 list-disc space-y-3 pl-6 text-slate-600">
               <li>
                 <strong>Nursery and Cherubs:</strong> 
                 For information regarding nursery and Cherubs admissions, please contact the school.
@@ -71,7 +71,7 @@ export default function AdmissionPage() {
               Guidelines for Admission to PU College
             </h2>
 
-            <p className="mb-8 text-base leading-7 text-gray-800">
+            <p className="mb-8 space-y-6 text-base leading-8 text-slate-600">
               Students must have completed their SSLC examination through the State Board, CBSE, or 
               ICSE. The available science combinations are PCMB, PCMC, and PCME. Students
               must qualify in a basic entrance test based on the 10th-standard science syllabus.
@@ -81,7 +81,7 @@ export default function AdmissionPage() {
               Guidelines for Admission to Boarding Home
             </h2>
 
-            <p className="mb-6 text-base leading-7 text-gray-800">
+            <p className="mb-6 space-y-6 text-base leading-8 text-slate-600">
               We provide a spacious and well-organised boarding facility for students from outside 
               Chikmagalur. For details about boarding facilities and admission procedures, please contact us.
             </p>
