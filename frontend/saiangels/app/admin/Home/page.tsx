@@ -11,7 +11,7 @@ interface Banner {
   order: number;
 }
 
-const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
+const response = await fetch(`${API_URL}/home/banners`);
 
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -27,7 +27,7 @@ export default function HomePage() {
   // FETCH BANNERS
   const fetchBanners = async () => {
     try {
-      const response = await fetch(`${API_URL}/home/banners`);
+     const response = await fetch(`${API}/banners`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -84,8 +84,8 @@ export default function HomePage() {
         formData.append("images", file);
       });
 
-      const response = await fetch(`${API_URL}/banners`, {
-        method: "PUT",
+      const response = await fetch(`${API}/banners`, {
+        method: "POST",
         body: formData,
       });
 
