@@ -1,76 +1,50 @@
-import { NextRequest, NextResponse } from "next/server";
-import {
-  getBanners,
-  createBanners,
-} from "@/controllers/bannerController";
+const express = require("express");
+const router = express.Router();
 
-export const runtime = "nodejs";
+const HomeController = require("../controllers/HomeController");
 
-export async function GET() {
-  try {
-    const banners = await getBanners();
+const multer = require("multer");
 
-    return NextResponse.json({
-      success: true,
-      banners,
-    });
-  } catch (error) {
-    console.error("Fetch banners error:", error);
+const storage = multer.memoryStorage();
 
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch banners" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const formData = await request.formData();
-
-    const files = formData.getAll("images");
-
-    const validFiles = files.filter(
-      (item): item is File =>
-        item instanceof File &&
-        item.type.startsWith("image/") &&
-        item.size > 0 &&
-        item.size <= 10 * 1024 * 1024
-    );
-
-    if (validFiles.length === 0 || validFiles.length !== files.length) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Select valid images under 10 MB each",
-        },
-        { status: 400 }
-      );
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
     }
+  },
+});
 
-    if (validFiles.length > 10) {
-      return NextResponse.json(
-        { success: false, message: "Maximum 10 images per upload" },
-        { status: 400 }
-      );
-    }
+// GET ALL BANNERS
+router.get("/banners", HomeController.getBanners);
 
-    const banners = await createBanners(validFiles);
+// UPLOAD MULTIPLE BANNERS
+router.post(
+  "/banners",
+  upload.array("images", 10),
+  HomeController.uploadBanners
+);
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Banners uploaded successfully",
-        banners,
-      },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("Banner upload error:", error);
+// REPLACE BANNER IMAGE
+router.put(
+  "/banners/:id",
+  upload.single("image"),
+  HomeController.updateBanner
+);
 
-    return NextResponse.json(
-      { success: false, message: "Banner upload failed" },
-      { status: 500 }
-    );
-  }
-}
+// DELETE BANNER
+router.delete("/banners/:id", HomeController.deleteBanner);
+
+// ACTIVATE / DEACTIVATE
+router.patch(
+  "/banners/:id/status",
+  HomeController.toggleBannerStatus
+);
+
+module.exports = router;
