@@ -23,126 +23,6 @@ interface Topper {
 
 const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
-// =====================================
-// PUBLIC TOPPERS CAROUSEL
-// =====================================
-
-export function ToppersSection() {
-  const [rankHolders, setRankHolders] = useState<Topper[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const fetchRankHolders = async () => {
-      try {
-        const response = await fetch(`${API}/toppers/active`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to load toppers");
-        }
-
-        setRankHolders(data.toppers || []);
-      } catch (error) {
-        console.error("Failed to fetch toppers:", error);
-      }
-    };
-
-    fetchRankHolders();
-  }, []);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) =>
-      prev >= rankHolders.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) =>
-      prev <= 0 ? rankHolders.length - 1 : prev - 1
-    );
-  };
-
-  if (rankHolders.length === 0) return null;
-
-  return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-7xl px-6">
-
-        <h2 className="mb-10 text-center text-3xl font-bold text-gray-900 md:text-4xl">
-          Our SSLC Rank Holders (2025 - 2026)
-        </h2>
-
-        <div className="relative">
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
-            {Array.from(
-              { length: Math.min(3, rankHolders.length) },
-              (_, index) => {
-                const topper =
-                  rankHolders[
-                    (currentIndex + index) % rankHolders.length
-                  ];
-
-                return (
-                  <div
-                    key={topper._id}
-                    className="overflow-hidden rounded-xl bg-gray-100 shadow-md"
-                  >
-                    <img
-                      src={topper.poster}
-                      alt={topper.name}
-                      className="h-80 w-full object-cover"
-                    />
-
-                    <div className="p-5 text-center">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {topper.name}
-                      </h3>
-
-                      <p className="mt-2 text-lg font-semibold text-blue-700">
-                        {topper.score}
-                      </p>
-                    </div>
-                  </div>
-                );
-              }
-            )}
-
-          </div>
-
-          {rankHolders.length > 1 && (
-            <div className="mt-8 flex justify-center gap-4">
-
-              <button
-                type="button"
-                onClick={prevSlide}
-                className="rounded-full bg-blue-700 px-6 py-3 text-white hover:bg-blue-800"
-              >
-                Previous
-              </button>
-
-              <button
-                type="button"
-                onClick={nextSlide}
-                className="rounded-full bg-blue-700 px-6 py-3 text-white hover:bg-blue-800"
-              >
-                Next
-              </button>
-
-            </div>
-          )}
-
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// =====================================
-// ADMIN HOME PAGE
-// =====================================
-
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -161,10 +41,7 @@ export default function HomePage() {
   const editInputRef = useRef<HTMLInputElement>(null);
   const editingId = useRef<string | null>(null);
 
-  // =====================================
   // FETCH BANNERS
-  // =====================================
-
   const fetchBanners = async () => {
     try {
       const response = await fetch(`${API}/banners`);
@@ -180,10 +57,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // FETCH TOPPERS
-  // =====================================
-
   const fetchToppers = async () => {
     try {
       const response = await fetch(`${API}/toppers`);
@@ -204,10 +78,7 @@ export default function HomePage() {
     fetchToppers();
   }, []);
 
-  // =====================================
   // BANNER UPLOAD
-  // =====================================
-
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -270,10 +141,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // BANNER EDIT
-  // =====================================
-
   const handleEdit = (id: string) => {
     editingId.current = id;
     editInputRef.current?.click();
@@ -323,10 +191,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // BANNER DELETE
-  // =====================================
-
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this banner? This will remove it from MongoDB and Cloudinary."
@@ -358,10 +223,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // BANNER STATUS
-  // =====================================
-
   const handleStatus = async (id: string) => {
     setError("");
     setMessage("");
@@ -384,10 +246,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
-  // ADD OR UPDATE TOPPER
-  // =====================================
-
+  // RESET TOPPER FORM
   const resetTopperForm = () => {
     if (topperPreview.startsWith("blob:")) {
       URL.revokeObjectURL(topperPreview);
@@ -400,6 +259,7 @@ export default function HomePage() {
     setEditingTopperId(null);
   };
 
+  // ADD OR UPDATE TOPPER
   const handleTopperSubmit = async () => {
     if (!topperName.trim() || !topperScore.trim()) {
       setError("Please enter student name and score");
@@ -455,10 +315,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // TOPPER EDIT
-  // =====================================
-
   const handleTopperEdit = (topper: Topper) => {
     setEditingTopperId(topper._id);
     setTopperName(topper.name);
@@ -472,10 +329,7 @@ export default function HomePage() {
     });
   };
 
-  // =====================================
   // TOPPER FILE SELECT
-  // =====================================
-
   const handleTopperFileChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -501,10 +355,7 @@ export default function HomePage() {
     setTopperPreview(URL.createObjectURL(file));
   };
 
-  // =====================================
   // TOPPER DELETE
-  // =====================================
-
   const handleTopperDelete = async (id: string) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this topper? This will remove the record from MongoDB and the poster from Cloudinary."
@@ -536,10 +387,7 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // TOPPER STATUS
-  // =====================================
-
   const handleTopperStatus = async (id: string) => {
     setLoading(true);
     setError("");
@@ -565,14 +413,10 @@ export default function HomePage() {
     }
   };
 
-  // =====================================
   // ADMIN PAGE JSX
-  // =====================================
-
   return (
     <main className="min-h-screen bg-gray-100">
       <section className="flex min-h-screen flex-col md:flex-row">
-
         <div className="min-w-0 flex-1 bg-[#f3f3f5] px-6 py-10 md:px-10">
           <div className="mx-auto max-w-7xl">
 
@@ -776,7 +620,8 @@ export default function HomePage() {
 
                   <p className="mt-2 text-sm text-gray-500">
                     JPG, PNG or WebP. Maximum size: 10 MB.
-                    {editingTopperId && " Leave empty to keep the existing poster."}
+                    {editingTopperId &&
+                      " Leave empty to keep the existing poster."}
                   </p>
                 </div>
 
@@ -799,7 +644,7 @@ export default function HomePage() {
                     type="button"
                     onClick={handleTopperSubmit}
                     disabled={loading}
-                    className="rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="rounded-md bg-blue-600 px-7 py-3 cursor-pointer text-white hover:bg-blue-700 disabled:opacity-50"
                   >
                     {loading
                       ? "Please wait..."
@@ -813,7 +658,7 @@ export default function HomePage() {
                       type="button"
                       onClick={resetTopperForm}
                       disabled={loading}
-                      className="rounded-md bg-gray-500 px-7 py-3 text-white hover:bg-gray-600 disabled:opacity-50"
+                      className="rounded-md bg-gray-500 px-7 py-3 cursor-pointer text-white hover:bg-gray-600 disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -878,7 +723,7 @@ export default function HomePage() {
                               type="button"
                               onClick={() => handleTopperEdit(topper)}
                               disabled={loading}
-                              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                              className="rounded-md bg-blue-600 cursor-pointer px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                             >
                               Edit
                             </button>
@@ -887,7 +732,7 @@ export default function HomePage() {
                               type="button"
                               onClick={() => handleTopperDelete(topper._id)}
                               disabled={loading}
-                              className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                              className="rounded-md bg-red-600 px-4 py-2 text-white cursor-pointer hover:bg-red-700 disabled:opacity-50"
                             >
                               Delete
                             </button>
