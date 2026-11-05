@@ -85,7 +85,7 @@ export default function HomePage() {
       });
 
       const response = await fetch(`${API_URL}/banners`, {
-        method: "POST",
+        method: "PUT",
         body: formData,
       });
 
