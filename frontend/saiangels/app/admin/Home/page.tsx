@@ -11,7 +11,7 @@ interface Banner {
   order: number;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -84,7 +84,7 @@ export default function HomePage() {
         formData.append("images", file);
       });
 
-      const response = await fetch(`${API_URL}/home/banners`, {
+      const response = await fetch(`${API_URL}/banners`, {
         method: "POST",
         body: formData,
       });
@@ -139,7 +139,7 @@ export default function HomePage() {
       const formData = new FormData();
       formData.append("image", file);
 
-      const response = await fetch(`${API_URL}/home/banners/${id}`, {
+      const response = await fetch(`${API}/banners/${id}`, {
         method: "PUT",
         body: formData,
       });
@@ -172,7 +172,7 @@ export default function HomePage() {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/home/banners/${id}`, {
+      const response = await fetch(`${API}/banners/${id}`, {
         method: "DELETE",
       });
 
@@ -198,7 +198,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `${API_URL}/home/banners/${id}/status`,
+        `${API}/banners/${id}/status`,
         { method: "PATCH" }
       );
 
