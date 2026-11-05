@@ -11,8 +11,54 @@ interface Banner {
   order: number;
 }
 
+interface Topper {
+  _id: string;
+  name: string;
+  score: string;
+  poster: string;
+  publicId: string;
+  isActive: boolean;
+  order: number;
+}
+
 const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
+// =====================================
+// PUBLIC TOPPERS CAROUSEL
+// =====================================
+
+export function ToppersSection() {
+  const [rankHolders, setRankHolders] = useState<Topper[]>([]);
+
+  useEffect(() => {
+    const fetchRankHolders = async () => {
+      try {
+        const response = await fetch(`${API}/toppers/active`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load toppers");
+        }
+
+        setRankHolders(data.toppers || []);
+      } catch (error) {
+        console.error("Failed to fetch toppers:", error);
+      }
+    };
+
+    fetchRankHolders();
+  }, []);
+
+  // Put your existing carousel state and functions here.
+
+  return (
+    <section>
+      {/* Put your existing Toppers carousel JSX here.
+          Use rankHolders.map(...) instead of the static array. */}
+    </section>
+  );
+}
+  
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -20,6 +66,14 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const [toppers, setToppers] = useState<Topper[]>([]);
+  const [topperName, setTopperName] = useState("");
+  const [topperScore, setTopperScore] = useState("");
+  const [topperFile, setTopperFile] = useState<File | null>(null);
+  const [topperPreview, setTopperPreview] = useState("");
+  const [editingTopperId, setEditingTopperId] = useState<string | null>(null);
+  const [rankHolders, setRankHolders] = useState<Topper[]>([]);
 
   const editInputRef = useRef<HTMLInputElement>(null);
   const editingId = useRef<string | null>(null);
@@ -43,8 +97,9 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchBanners();
-  }, []);
+  fetchBanners();
+  fetchToppers();
+}, []);
 
   // SELECT IMAGES
   const handleFileChange = (
@@ -222,6 +277,198 @@ export default function HomePage() {
     }
   };
 
+
+  // FETCH TOPPERS
+const fetchToppers = async () => {
+  try {
+    const response = await fetch(`${API}/toppers`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch toppers");
+    }
+
+    setToppers(data.toppers || []);
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to load toppers"
+    );
+  }
+};
+
+// ADD OR UPDATE TOPPER
+const handleTopperSubmit = async () => {
+  if (!topperName.trim() || !topperScore.trim()) {
+    setError("Please enter student name and score");
+    return;
+  }
+
+  if (!editingTopperId && !topperFile) {
+    setError("Please select a topper poster");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const formData = new FormData();
+
+    formData.append("name", topperName);
+    formData.append("score", topperScore);
+
+    if (topperFile) {
+      formData.append("poster", topperFile);
+    }
+
+    const url = editingTopperId
+      ? `${API}/toppers/${editingTopperId}`
+      : `${API}/toppers`;
+
+    const response = await fetch(url, {
+      method: editingTopperId ? "PUT" : "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save topper");
+    }
+
+    setMessage(
+      editingTopperId
+        ? "Topper updated successfully!"
+        : "Topper added successfully!"
+    );
+
+    resetTopperForm();
+    await fetchToppers();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to save topper"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// SELECT TOPPER FOR EDITING
+const handleTopperEdit = (topper: Topper) => {
+  setEditingTopperId(topper._id);
+  setTopperName(topper.name);
+  setTopperScore(topper.score);
+  setTopperFile(null);
+  setTopperPreview(topper.poster);
+
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth",
+  });
+};
+
+// RESET TOPPER FORM
+const resetTopperForm = () => {
+  if (topperPreview.startsWith("blob:")) {
+    URL.revokeObjectURL(topperPreview);
+  }
+
+  setTopperName("");
+  setTopperScore("");
+  setTopperFile(null);
+  setTopperPreview("");
+  setEditingTopperId(null);
+};
+
+// SELECT TOPPER POSTER
+const handleTopperFileChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  if (
+    !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+    file.size > 10 * 1024 * 1024
+  ) {
+    setError("Select a JPG, PNG or WebP image under 10 MB");
+    e.target.value = "";
+    return;
+  }
+
+  if (topperPreview.startsWith("blob:")) {
+    URL.revokeObjectURL(topperPreview);
+  }
+
+  setError("");
+  setTopperFile(file);
+  setTopperPreview(URL.createObjectURL(file));
+};
+
+// DELETE TOPPER
+const handleTopperDelete = async (id: string) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this topper? This will remove the record from MongoDB and the poster from Cloudinary."
+  );
+
+  if (!confirmed) return;
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/toppers/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete topper");
+    }
+
+    alert("Topper deleted successfully!");
+    await fetchToppers();
+  } catch (err) {
+    alert(
+      err instanceof Error ? err.message : "Failed to delete topper"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ACTIVATE / DEACTIVATE TOPPER
+const handleTopperStatus = async (id: string) => {
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/toppers/${id}/status`, {
+      method: "PATCH",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Status update failed");
+    }
+
+    setMessage("Topper status updated!");
+    await fetchToppers();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Status update failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <main className="min-h-screen bg-gray-100">
 
@@ -390,8 +637,220 @@ export default function HomePage() {
                   No banners uploaded yet.
                 </p>
               )}
-
+            <div className="mx-auto max-w-7xl">
             </div>
+
+
+              <hr className="my-10 border-gray-400" />
+
+{/* TOPPERS MANAGEMENT */}
+<section className="space-y-6">
+
+  <h2 className="text-3xl font-semibold text-gray-900">
+    SSLC Rank Holders / Toppers
+  </h2>
+
+  <p className="text-gray-600">
+    Add, edit, activate or delete student achievement posters.
+  </p>
+
+  {/* TOPPER FORM */}
+  <div className="space-y-5 rounded-lg border border-gray-300 bg-white p-6">
+
+    <h3 className="text-xl font-semibold text-gray-800">
+      {editingTopperId ? "Edit Topper" : "Add New Topper"}
+    </h3>
+
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Student Name
+      </label>
+
+      <input
+        type="text"
+        value={topperName}
+        onChange={(e) => setTopperName(e.target.value)}
+        placeholder="Enter student name"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Score
+      </label>
+
+      <input
+        type="text"
+        value={topperScore}
+        onChange={(e) => setTopperScore(e.target.value)}
+        placeholder="Example: SSLC (97.21%)"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Topper Poster
+      </label>
+
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handleTopperFileChange}
+        className="w-full rounded-lg border border-gray-300 bg-gray-100 text-sm file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-cyan-500 file:px-5 file:py-3 file:font-semibold file:text-black"
+      />
+
+      <p className="mt-2 text-sm text-gray-500">
+        JPG, PNG or WebP. Maximum size: 10 MB.
+        {editingTopperId && " Leave empty to keep the existing poster."}
+      </p>
+    </div>
+
+    {/* POSTER PREVIEW */}
+    {topperPreview && (
+      <div>
+        <p className="mb-2 font-medium text-gray-700">
+          Poster Preview
+        </p>
+
+        <img
+          src={topperPreview}
+          alt="Topper poster preview"
+          className="h-64 w-48 rounded-md border border-gray-300 object-cover"
+        />
+      </div>
+    )}
+
+    <div className="flex flex-wrap gap-3">
+
+      <button
+        type="button"
+        onClick={handleTopperSubmit}
+        disabled={loading}
+        className="rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+      >
+        {loading
+          ? "Please wait..."
+          : editingTopperId
+          ? "Update Topper"
+          : "Add Topper"}
+      </button>
+
+      {editingTopperId && (
+        <button
+          type="button"
+          onClick={resetTopperForm}
+          disabled={loading}
+          className="rounded-md bg-gray-500 px-7 py-3 text-white hover:bg-gray-600 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      )}
+
+    </div>
+
+  </div>
+
+  {/* TOPPERS TABLE */}
+  <div className="overflow-x-auto">
+
+    <table className="w-full border-collapse text-left">
+
+      <thead>
+        <tr className="bg-[#174b91] text-white">
+          <th className="px-4 py-5">S.No</th>
+          <th className="px-4 py-5 text-center">Poster</th>
+          <th className="px-4 py-5">Student Name</th>
+          <th className="px-4 py-5">Score</th>
+          <th className="px-4 py-5">Status</th>
+          <th className="px-4 py-5">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {toppers.map((topper, index) => (
+          <tr
+            key={topper._id}
+            className="border-b border-gray-400 bg-[#e9e9e9]"
+          >
+
+            <td className="px-4 py-5">
+              {index + 1}
+            </td>
+
+            <td className="px-4 py-4">
+              <div className="flex justify-center">
+                <img
+                  src={topper.poster}
+                  alt={topper.name}
+                  className="h-36 w-28 rounded-md border border-gray-400 object-cover"
+                />
+              </div>
+            </td>
+
+            <td className="px-4 py-5 font-medium">
+              {topper.name}
+            </td>
+
+            <td className="px-4 py-5">
+              {topper.score}
+            </td>
+
+            <td className="px-4 py-5">
+              <button
+                type="button"
+                onClick={() => handleTopperStatus(topper._id)}
+                disabled={loading}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${
+                  topper.isActive
+                    ? "bg-green-600"
+                    : "bg-gray-500"
+                }`}
+              >
+                {topper.isActive ? "Active" : "Inactive"}
+              </button>
+            </td>
+
+            <td className="px-4 py-5">
+              <div className="flex flex-wrap gap-2">
+
+                <button
+                  type="button"
+                  onClick={() => handleTopperEdit(topper)}
+                  disabled={loading}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleTopperDelete(topper._id)}
+                  disabled={loading}
+                  className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  Delete
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
+
+    {toppers.length === 0 && (
+      <p className="py-10 text-center text-gray-500">
+        No toppers added yet.
+      </p>
+    )}
+
+  </div>
+
+</section>
 
           </div>
         </div>
