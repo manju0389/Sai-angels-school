@@ -1,8 +1,25 @@
 
-export function ToppersSection() {
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface Topper {
+  _id: string;
+  name: string;
+  score: string;
+  poster: string;
+  publicId: string;
+  isActive: boolean;
+  order: number;
+}
+
+const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
+
+export default function ToppersSection() {
   const [rankHolders, setRankHolders] = useState<Topper[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Fetch active toppers from the backend
   useEffect(() => {
     const fetchRankHolders = async () => {
       try {
@@ -22,6 +39,7 @@ export function ToppersSection() {
     fetchRankHolders();
   }, []);
 
+  // Carousel settings
   const visibleCount = 3;
   const maxIndex = Math.max(0, rankHolders.length - visibleCount);
 
@@ -37,7 +55,10 @@ export function ToppersSection() {
     );
   };
 
-  if (rankHolders.length === 0) return null;
+  // Do not display the section if there are no active toppers
+  if (rankHolders.length === 0) {
+    return null;
+  }
 
   return (
     <section className="bg-[#142f70] px-4 py-10 text-white sm:px-6 sm:py-12 lg:px-8">
