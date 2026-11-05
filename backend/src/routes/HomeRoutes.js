@@ -1,3 +1,4 @@
+
 import express from "express";
 import multer from "multer";
 
@@ -13,6 +14,12 @@ import {
   updateTopper,
   deleteTopper,
   toggleTopperStatus,
+  getGallery,
+  getActiveGallery,
+  uploadGalleryImage,
+  updateGalleryImage,
+  deleteGalleryImage,
+  toggleGalleryStatus,
 } from "../controllers/HomeController.js";
 
 const router = express.Router();
@@ -51,14 +58,25 @@ router.patch("/banners/:id/status", toggleBannerStatus);
 // TOPPER ROUTES
 // ==========================================
 
-// Public website - active toppers only
 router.get("/toppers/active", getActiveToppers);
-
-// Admin - all toppers
 router.get("/toppers", getToppers);
 router.post("/toppers", upload.single("poster"), uploadTopper);
 router.put("/toppers/:id", upload.single("poster"), updateTopper);
 router.delete("/toppers/:id", deleteTopper);
 router.patch("/toppers/:id/status", toggleTopperStatus);
+
+// ==========================================
+// GALLERY ROUTES
+// ==========================================
+
+// Public website - active gallery images only
+router.get("/gallery/active", getActiveGallery);
+
+// Admin - all gallery images
+router.get("/gallery", getGallery);
+router.post("/gallery", upload.single("image"), uploadGalleryImage);
+router.put("/gallery/:id", upload.single("image"), updateGalleryImage);
+router.delete("/gallery/:id", deleteGalleryImage);
+router.patch("/gallery/:id/status", toggleGalleryStatus);
 
 export default router;
