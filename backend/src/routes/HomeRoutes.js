@@ -1,9 +1,15 @@
-const express = require("express");
+import express from "express";
+import multer from "multer";
+
+import {
+  getBanners,
+  uploadBanners,
+  updateBanner,
+  deleteBanner,
+  toggleBannerStatus,
+} from "../controllers/HomeController.js";
+
 const router = express.Router();
-
-const HomeController = require("../controllers/HomeController");
-
-const multer = require("multer");
 
 const storage = multer.memoryStorage();
 
@@ -13,38 +19,24 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files are allowed"));
+      cb(new Error("Only JPG, PNG and WebP images are allowed"));
     }
   },
 });
 
-// GET ALL BANNERS
-router.get("/banners", HomeController.getBanners);
+router.get("/banners", getBanners);
+router.post("/banners", upload.array("images", 10), uploadBanners);
+router.put("/banners/:id", upload.single("image"), updateBanner);
+router.delete("/banners/:id", deleteBanner);
+router.patch("/banners/:id/status", toggleBannerStatus);
 
-// UPLOAD MULTIPLE BANNERS
-router.post(
-  "/banners",
-  upload.array("images", 10),
-  HomeController.uploadBanners
-);
-
-// REPLACE BANNER IMAGE
-router.put(
-  "/banners/:id",
-  upload.single("image"),
-  HomeController.updateBanner
-);
-
-// DELETE BANNER
-router.delete("/banners/:id", HomeController.deleteBanner);
-
-// ACTIVATE / DEACTIVATE
-router.patch(
-  "/banners/:id/status",
-  HomeController.toggleBannerStatus
-);
-
-module.exports = router;
+export default router;
