@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+
+import mongoose from "mongoose";
 
 const HomeSchema = new mongoose.Schema(
   {
@@ -6,17 +7,14 @@ const HomeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
     publicId: {
       type: String,
       required: true,
     },
-
     isActive: {
       type: Boolean,
       default: true,
     },
-
     order: {
       type: Number,
       default: 0,
@@ -27,6 +25,7 @@ const HomeSchema = new mongoose.Schema(
   }
 );
 
-module.exports =
-  mongoose.models.Home ||
-  mongoose.model("Home", HomeSchema);
+const Home =
+  mongoose.models.Home || mongoose.model("Home", HomeSchema);
+
+export default Home;
