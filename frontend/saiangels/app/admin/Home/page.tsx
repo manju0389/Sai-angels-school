@@ -222,52 +222,13 @@ export default function HomePage() {
 
       <section className="flex min-h-screen flex-col md:flex-row">
 
-        {/* SIDEBAR */}
-        <aside className="w-full bg-[#4b455b] text-white md:w-[330px] md:shrink-0">
-
-          <div className="border-b border-white/40 px-8 py-8">
-            <h2 className="text-2xl font-semibold">
-              Admin Panel
-            </h2>
-          </div>
-
-          <nav className="px-4 py-4">
-            {[
-              "Dashboard",
-              "Home Page",
-              "Banners Page",
-              "Achievements Page",
-              "Administration Page",
-              "CBSE School Page",
-              "Founder Page",
-              "Photo Gallery Page",
-              "Principal Speak Page",
-              "Video Gallery Page",
-              "Working Hours Page",
-            ].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className={`block border-b border-white/40 px-5 py-6 text-lg transition hover:bg-white/10 ${
-                  item === "Banners Page"
-                    ? "bg-white/10 font-semibold"
-                    : ""
-                }`}
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-
-        </aside>
-
         {/* MAIN CONTENT */}
         <div className="min-w-0 flex-1 bg-[#f3f3f5] px-6 py-10 md:px-10">
 
           <div className="mx-auto max-w-7xl">
 
             <h1 className="mb-5 text-4xl font-normal text-gray-900 md:text-5xl">
-              Banners Page
+             Home Page
             </h1>
 
             <hr className="mb-8 border-gray-400" />
