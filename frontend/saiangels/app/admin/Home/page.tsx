@@ -11,7 +11,7 @@ interface Banner {
   order: number;
 }
 
-const response = await fetch(`${API_URL}/home/banners`);
+const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
