@@ -162,34 +162,39 @@ export default function HomePage() {
   };
 
   // DELETE BANNER
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this banner?")) {
-      return;
+ const handleDelete = async (id: string) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this banner? This will remove it from MongoDB and Cloudinary."
+  );
+
+  if (!confirmDelete) return;
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/banners/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete banner");
     }
 
-    setLoading(true);
-    setError("");
-    setMessage("");
+    alert("Banner deleted successfully!");
+    await fetchBanners();
 
-    try {
-      const response = await fetch(`${API}/banners/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Delete failed");
-      }
-
-      setMessage("Banner deleted successfully!");
-      await fetchBanners();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    alert(
+      err instanceof Error ? err.message : "Failed to delete banner"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ACTIVE / INACTIVE
   const handleStatus = async (id: string) => {
@@ -227,7 +232,7 @@ export default function HomePage() {
 
           <div className="mx-auto max-w-7xl">
 
-            <h1 className="mb-5 text-4xl font-normal text-gray-900 md:text-5xl">
+            <h1 className="mb-5 text-4xl font-normal text-gray-900 md:text-4xl">
              Home Page
             </h1>
 
@@ -261,7 +266,7 @@ export default function HomePage() {
               <button
                 onClick={handleUpload}
                 disabled={loading}
-                className="rounded-md bg-blue-600 px-7 py-3 text-lg text-white hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-md bg-blue-600 px-7 py-3 text-lg text-white hover:bg-blue-700 cursor-pointer disabled:opacity-50"
               >
                 {loading ? "Please wait..." : "Upload"}
               </button>
@@ -358,7 +363,7 @@ export default function HomePage() {
                           <button
                             onClick={() => handleEdit(banner._id)}
                             disabled={loading}
-                            className="rounded-md bg-blue-600 px-5 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                            className="rounded-md bg-blue-600 px-5 py-2 text-white cursor-pointer hover:bg-blue-700 disabled:opacity-50"
                           >
                             Edit
                           </button>
@@ -366,7 +371,7 @@ export default function HomePage() {
                           <button
                             onClick={() => handleDelete(banner._id)}
                             disabled={loading}
-                            className="rounded-md bg-red-600 px-5 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            className="rounded-md bg-red-600 px-5 py-2 text-white cursor-pointer hover:bg-red-700 disabled:opacity-50"
                           >
                             Delete
                           </button>
