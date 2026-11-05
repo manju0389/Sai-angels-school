@@ -1,5 +1,6 @@
-const Home = require("../models/Home");
-const cloudinary = require("../config/cloudinary");
+
+import Home from "../models/Home.js";
+import cloudinary from "../config/cloudinary.js";
 
 // Upload image buffer to Cloudinary
 const uploadToCloudinary = (buffer) => {
@@ -10,10 +11,7 @@ const uploadToCloudinary = (buffer) => {
         resource_type: "image",
       },
       (error, result) => {
-        if (error) {
-          return reject(error);
-        }
-
+        if (error) return reject(error);
         resolve(result);
       }
     );
@@ -23,7 +21,7 @@ const uploadToCloudinary = (buffer) => {
 };
 
 // GET ALL BANNERS
-exports.getBanners = async (req, res) => {
+export const getBanners = async (req, res) => {
   try {
     const banners = await Home.find().sort({
       order: 1,
@@ -36,7 +34,6 @@ exports.getBanners = async (req, res) => {
     });
   } catch (error) {
     console.error("Get banners error:", error);
-
     res.status(500).json({
       success: false,
       message: "Failed to fetch banners",
@@ -45,7 +42,9 @@ exports.getBanners = async (req, res) => {
 };
 
 // UPLOAD MULTIPLE BANNERS
-exports.uploadBanners = async (req, res) => {
+export const uploadBanners = async (req, res) => {
+  const uploadedBanners = [];
+
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -53,8 +52,6 @@ exports.uploadBanners = async (req, res) => {
         message: "Please select banner images",
       });
     }
-
-    const uploadedBanners = [];
 
     for (const file of req.files) {
       const result = await uploadToCloudinary(file.buffer);
@@ -85,12 +82,13 @@ exports.uploadBanners = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Banner upload failed",
+      uploadedCount: uploadedBanners.length,
     });
   }
 };
 
 // UPDATE / REPLACE BANNER IMAGE
-exports.updateBanner = async (req, res) => {
+export const updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -111,13 +109,11 @@ exports.updateBanner = async (req, res) => {
     }
 
     const result = await uploadToCloudinary(req.file.buffer);
-
     const oldPublicId = banner.publicId;
 
     try {
       banner.image = result.secure_url;
       banner.publicId = result.public_id;
-
       await banner.save();
     } catch (error) {
       await cloudinary.uploader.destroy(result.public_id);
@@ -139,7 +135,6 @@ exports.updateBanner = async (req, res) => {
     });
   } catch (error) {
     console.error("Update banner error:", error);
-
     res.status(500).json({
       success: false,
       message: "Failed to update banner",
@@ -148,7 +143,7 @@ exports.updateBanner = async (req, res) => {
 };
 
 // DELETE BANNER
-exports.deleteBanner = async (req, res) => {
+export const deleteBanner = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -177,7 +172,6 @@ exports.deleteBanner = async (req, res) => {
     });
   } catch (error) {
     console.error("Delete banner error:", error);
-
     res.status(500).json({
       success: false,
       message: "Failed to delete banner",
@@ -186,7 +180,7 @@ exports.deleteBanner = async (req, res) => {
 };
 
 // ACTIVATE / DEACTIVATE BANNER
-exports.toggleBannerStatus = async (req, res) => {
+export const toggleBannerStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -200,7 +194,6 @@ exports.toggleBannerStatus = async (req, res) => {
     }
 
     banner.isActive = !banner.isActive;
-
     await banner.save();
 
     res.status(200).json({
@@ -210,7 +203,6 @@ exports.toggleBannerStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Toggle banner error:", error);
-
     res.status(500).json({
       success: false,
       message: "Failed to update banner status",
