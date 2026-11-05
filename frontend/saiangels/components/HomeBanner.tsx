@@ -8,29 +8,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const slides = [
-  {
-    title: "Inspiring Young Minds, Building Bright Futures.",
-    description:
-      "Discover a place where curiosity grows, talents shine, and every student can achieve their full potential.",
-    image:
-      "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=2000&q=85",
-  },
-  {
-    title: "A Better Learning Experience Starts Here.",
-    description:
-      "Empowering students with knowledge, creativity, and the confidence to shape tomorrow.",
-    image:
-      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=2000&q=85",
-  },
-  {
-    title: "Give Your Child a Bright Start.",
-    description:
-      "Join a welcoming school community where every child is encouraged to dream big and achieve more.",
-    image:
-      "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=2000&q=85",
-  },
-];
 
 export default function HomeBanner() {
   const [current, setCurrent] = useState(0);
@@ -68,19 +45,6 @@ export default function HomeBanner() {
 
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/65 to-slate-900/10" />
 
-          <div className="relative mx-auto flex h-full max-w-7xl items-center px-6 py-20 sm:px-10 lg:px-16">
-            <div className="max-w-3xl text-white">
-
-              <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-7xl">
-                {slide.title}
-              </h1>
-
-              <p className="mb-9 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">
-                {slide.description}
-              </p>
-
-            </div>
-          </div>
         </div>
       ))}
 
