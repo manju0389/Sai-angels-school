@@ -21,6 +21,15 @@ interface Topper {
   order: number;
 }
 
+interface GalleryImage {
+  _id: string;
+  image: string;
+  publicId: string;
+  alt: string;
+  isActive: boolean;
+  order: number;
+}
+
 const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
 export default function HomePage() {
@@ -31,6 +40,7 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // TOPPERS STATES
   const [toppers, setToppers] = useState<Topper[]>([]);
   const [topperName, setTopperName] = useState("");
   const [topperScore, setTopperScore] = useState("");
@@ -38,6 +48,16 @@ export default function HomePage() {
   const [topperPreview, setTopperPreview] = useState("");
   const [editingTopperId, setEditingTopperId] = useState<string | null>(null);
 
+  // GALLERY STATES
+  const [gallery, setGallery] = useState<GalleryImage[]>([]);
+  const [galleryFile, setGalleryFile] = useState<File | null>(null);
+  const [galleryPreview, setGalleryPreview] = useState("");
+  const [galleryAlt, setGalleryAlt] = useState("");
+  const [editingGalleryId, setEditingGalleryId] = useState<string | null>(null);
+
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const galleryEditingId = useRef<string | null>(null);
+  
   const editInputRef = useRef<HTMLInputElement>(null);
   const editingId = useRef<string | null>(null);
 
@@ -74,9 +94,28 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchBanners();
-    fetchToppers();
-  }, []);
+  fetchBanners();
+  fetchToppers();
+  fetchGallery();
+}, []);
+
+  // FETCH GALLERY
+const fetchGallery = async () => {
+  try {
+    const response = await fetch(`${API}/gallery`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch gallery");
+    }
+
+    setGallery(data.gallery || []);
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to load gallery"
+    );
+  }
+};
 
   // BANNER UPLOAD
   const handleFileChange = (
@@ -412,6 +451,196 @@ export default function HomePage() {
       setLoading(false);
     }
   };
+
+  
+// ==========================================
+// GALLERY MANAGEMENT
+// ==========================================
+
+// RESET GALLERY FORM
+const resetGalleryForm = () => {
+  if (galleryPreview.startsWith("blob:")) {
+    URL.revokeObjectURL(galleryPreview);
+  }
+
+  setGalleryFile(null);
+  setGalleryPreview("");
+  setGalleryAlt("");
+  setEditingGalleryId(null);
+
+  if (galleryInputRef.current) {
+    galleryInputRef.current.value = "";
+  }
+};
+
+// SELECT GALLERY IMAGE
+const handleGalleryFileChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  if (
+    !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+    file.size > 10 * 1024 * 1024
+  ) {
+    setError("Select a JPG, PNG or WebP image under 10 MB");
+    e.target.value = "";
+    return;
+  }
+
+  if (galleryPreview.startsWith("blob:")) {
+    URL.revokeObjectURL(galleryPreview);
+  }
+
+  setError("");
+  setGalleryFile(file);
+  setGalleryPreview(URL.createObjectURL(file));
+};
+
+// ADD OR UPDATE GALLERY IMAGE
+const handleGallerySubmit = async () => {
+  if (!galleryAlt.trim()) {
+    setError("Please enter an image description");
+    return;
+  }
+
+  if (!editingGalleryId && !galleryFile) {
+    setError("Please select a gallery image");
+    return;
+  }
+
+  if (!editingGalleryId && gallery.length >= 10) {
+    setError("Maximum 10 gallery images are allowed");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const formData = new FormData();
+
+    formData.append("alt", galleryAlt.trim());
+
+    if (galleryFile) {
+      formData.append("image", galleryFile);
+    }
+
+    const url = editingGalleryId
+      ? `${API}/gallery/${editingGalleryId}`
+      : `${API}/gallery`;
+
+    const response = await fetch(url, {
+      method: editingGalleryId ? "PUT" : "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save gallery image");
+    }
+
+    setMessage(
+      editingGalleryId
+        ? "Gallery image updated successfully!"
+        : "Gallery image uploaded successfully!"
+    );
+
+    resetGalleryForm();
+    await fetchGallery();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to save gallery image"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// EDIT GALLERY IMAGE
+const handleGalleryEdit = (image: GalleryImage) => {
+  setEditingGalleryId(image._id);
+  setGalleryAlt(image.alt);
+  setGalleryFile(null);
+  setGalleryPreview(image.image);
+
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth",
+  });
+};
+
+// DELETE GALLERY IMAGE
+const handleGalleryDelete = async (id: string) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this gallery image? This will remove it from MongoDB and Cloudinary."
+  );
+
+  if (!confirmed) return;
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/gallery/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete gallery image");
+    }
+
+    setMessage("Gallery image deleted successfully!");
+
+    if (editingGalleryId === id) {
+      resetGalleryForm();
+    }
+
+    await fetchGallery();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to delete gallery image"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// GALLERY STATUS
+const handleGalleryStatus = async (id: string) => {
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/gallery/${id}/status`, {
+      method: "PATCH",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Status update failed");
+    }
+
+    setMessage("Gallery image status updated!");
+    await fetchGallery();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Status update failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ADMIN PAGE JSX
   return (
@@ -750,6 +979,225 @@ export default function HomePage() {
                 )}
               </div>
             </section>
+
+            
+            <hr className="my-10 border-gray-400" />
+
+            {/* GALLERY MANAGEMENT */}
+            <section className="space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-3xl font-semibold text-gray-900">
+                    School Gallery
+                  </h2>
+
+                  <p className="mt-2 text-gray-600">
+                    Upload, edit, activate or delete school gallery images.
+                  </p>
+                </div>
+
+                <span
+                  className={`rounded-full px-5 py-2 font-semibold ${
+                    gallery.length >= 10
+                      ? "bg-red-100 text-red-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {gallery.length} / 10 Images
+                </span>
+              </div>
+
+              {/* GALLERY FORM */}
+              <div className="space-y-5 rounded-lg border border-gray-300 bg-white p-6">
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {editingGalleryId
+                    ? "Edit Gallery Image"
+                    : "Add Gallery Image"}
+                </h3>
+
+                <div>
+                  <label className="mb-2 block font-medium text-gray-700">
+                    Image Description
+                  </label>
+
+                  <input
+                    type="text"
+                    value={galleryAlt}
+                    onChange={(e) => setGalleryAlt(e.target.value)}
+                    placeholder="Example: Annual Day Celebration"
+                    className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block font-medium text-gray-700">
+                    Gallery Image
+                  </label>
+
+                  <input
+                    ref={galleryInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleGalleryFileChange}
+                    disabled={!editingGalleryId && gallery.length >= 10}
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 text-sm file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-cyan-500 file:px-5 file:py-3 file:font-semibold file:text-black disabled:opacity-50"
+                  />
+
+                  <p className="mt-2 text-sm text-gray-500">
+                    JPG, PNG or WebP. Maximum size: 10 MB.
+                    {editingGalleryId &&
+                      " Leave empty to keep the existing image."}
+                  </p>
+                </div>
+
+                {galleryPreview && (
+                  <div>
+                    <p className="mb-2 font-medium text-gray-700">
+                      Image Preview
+                    </p>
+
+                    <img
+                      src={galleryPreview}
+                      alt="Gallery preview"
+                      className="h-48 w-72 rounded-md border border-gray-300 object-cover"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGallerySubmit}
+                    disabled={
+                      loading ||
+                      (!editingGalleryId && gallery.length >= 10)
+                    }
+                    className="cursor-pointer rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {loading
+                      ? "Please wait..."
+                      : editingGalleryId
+                      ? "Update Image"
+                      : "Upload Image"}
+                  </button>
+
+                  {editingGalleryId && (
+                    <button
+                      type="button"
+                      onClick={resetGalleryForm}
+                      disabled={loading}
+                      className="cursor-pointer rounded-md bg-gray-500 px-7 py-3 text-white hover:bg-gray-600 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+
+                {!editingGalleryId && gallery.length >= 10 && (
+                  <p className="font-medium text-red-600">
+                    Maximum 10 images reached. Delete an existing image
+                    to upload another.
+                  </p>
+                )}
+              </div>
+
+              {/* GALLERY TABLE */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left">
+                  <thead>
+                    <tr className="bg-[#174b91] text-white">
+                      <th className="px-4 py-5">S.No</th>
+                      <th className="px-4 py-5 text-center">
+                        Gallery Image
+                      </th>
+                      <th className="px-4 py-5">Description</th>
+                      <th className="px-4 py-5">Status</th>
+                      <th className="px-4 py-5">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {gallery.map((image, index) => (
+                      <tr
+                        key={image._id}
+                        className="border-b border-gray-400 bg-[#e9e9e9]"
+                      >
+                        <td className="px-4 py-5">
+                          {index + 1}
+                        </td>
+
+                        <td className="px-4 py-4">
+                          <div className="flex flex-col items-center gap-2">
+                            <img
+                              src={image.image}
+                              alt={image.alt}
+                              className="h-28 w-48 rounded-md border border-gray-400 object-cover"
+                            />
+
+                            <a
+                              href={image.image}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-blue-700 underline"
+                            >
+                              View Image
+                            </a>
+                          </div>
+                        </td>
+
+                        <td className="px-4 py-5 font-medium">
+                          {image.alt}
+                        </td>
+
+                        <td className="px-4 py-5">
+                          <button
+                            type="button"
+                            onClick={() => handleGalleryStatus(image._id)}
+                            disabled={loading}
+                            className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${
+                              image.isActive
+                                ? "bg-green-600"
+                                : "bg-gray-500"
+                            }`}
+                          >
+                            {image.isActive ? "Active" : "Inactive"}
+                          </button>
+                        </td>
+
+                        <td className="px-4 py-5">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleGalleryEdit(image)}
+                              disabled={loading}
+                              className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleGalleryDelete(image._id)}
+                              disabled={loading}
+                              className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {gallery.length === 0 && (
+                  <p className="py-10 text-center text-gray-500">
+                    No gallery images uploaded yet.
+                  </p>
+                )}
+              </div>
+            </section>
+
 
           </div>
         </div>
