@@ -1,13 +1,6 @@
-import mongoose, { Schema, models } from "mongoose";
+const mongoose = require("mongoose");
 
-export interface IBanner {
-  image: string;
-  publicId: string;
-  order: number;
-  isActive: boolean;
-}
-
-const BannerSchema = new Schema<IBanner>(
+const HomeSchema = new mongoose.Schema(
   {
     image: {
       type: String,
@@ -19,14 +12,14 @@ const BannerSchema = new Schema<IBanner>(
       required: true,
     },
 
-    order: {
-      type: Number,
-      default: 0,
-    },
-
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    order: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -34,8 +27,6 @@ const BannerSchema = new Schema<IBanner>(
   }
 );
 
-const Banner =
-  models.Banner ||
-  mongoose.model<IBanner>("Banner", BannerSchema);
-
-export default Banner;
+module.exports =
+  mongoose.models.Home ||
+  mongoose.model("Home", HomeSchema);
