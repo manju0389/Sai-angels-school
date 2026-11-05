@@ -18,6 +18,7 @@ import principalRoutes from "./routes/principalRoutes.js";
 import administrationRoutes from "./routes/administrationRoutes.js";
 import photogalleryRoutes from "./routes/photogalleryRoutes.js";
 import cbseDocumentRoutes from "./routes/cbseDocumentRoutes.js";
+import HomeRoutes from "./routes/HomeRoutes.js";
 
 // Authentication route
 import authRoutes from "./routes/authRoutes.js";
@@ -87,6 +88,8 @@ app.use("/api/auth", authRoutes);
 
 // Existing school APIs
 app.use("/api/achievements", achievementRoutes);
+
+app.use("/api/home", HomeRoutes);
 
 app.use(
   "/api/admission/working-hours",
