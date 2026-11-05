@@ -5,30 +5,59 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type GalleryImage = {
-  src: string;
+  _id: string;
+  image: string;
   alt: string;
+  isActive: boolean;
+  order: number;
 };
 
-const galleryImages: GalleryImage[] = [
-  { src: "/images/travel1.jpg", alt: "Annual Day 1" },
-  { src: "/images/travel2.jpg", alt: "Annual Day 2" },
-  { src: "/images/travel3.jpg", alt: "Annual Day 3" },
-  { src: "/images/travel4.jpg", alt: "Annual Day 4" },
-  { src: "/images/travel5.jpg", alt: "Annual Day 5" },
-  { src: "/images/travel6.jpg", alt: "Annual Day 6" },
-  { src: "/images/travel7.jpg", alt: "Annual Day 7" },
-  { src: "/images/travel8.jpg", alt: "Annual Day 8" },
-];
+const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
 const SLIDE_INTERVAL = 3000;
 const VISIBLE_IMAGES = 4;
 
 export default function PhotoGalleryPage() {
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [showAllImages, setShowAllImages] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const maxIndex = Math.max(0, galleryImages.length - VISIBLE_IMAGES);
+  // FETCH ACTIVE GALLERY IMAGES
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch(`${API}/gallery/active`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch gallery images");
+        }
+
+        const result = await response.json();
+
+        setGalleryImages(result.gallery || []);
+      } catch (error) {
+        console.error("Gallery fetch error:", error);
+        setGalleryImages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
+  }, []);
+
+  const maxIndex = Math.max(
+    0,
+    galleryImages.length - VISIBLE_IMAGES
+  );
+
+  // Keep carousel index valid when gallery data changes
+  useEffect(() => {
+    setCurrentIndex((current) =>
+      Math.min(current, maxIndex)
+    );
+  }, [maxIndex]);
 
   const nextSlide = () => {
     setCurrentIndex((current) =>
@@ -42,8 +71,9 @@ export default function PhotoGalleryPage() {
     );
   };
 
+  // AUTO SLIDE
   useEffect(() => {
-    if (isPaused || maxIndex === 0 || showAllImages) return;
+    if (isPaused || maxIndex === 0) return;
 
     const timer = window.setInterval(() => {
       setCurrentIndex((current) =>
@@ -52,23 +82,36 @@ export default function PhotoGalleryPage() {
     }, SLIDE_INTERVAL);
 
     return () => window.clearInterval(timer);
-  }, [isPaused, maxIndex, showAllImages]);
+  }, [isPaused, maxIndex]);
+
+  if (loading) {
+    return (
+      <main className="w-full bg-white py-12 sm:py-14">
+        <div className="text-center text-slate-500">
+          Loading gallery...
+        </div>
+      </main>
+    );
+  }
+
+  if (galleryImages.length === 0) {
+    return null;
+  }
 
   return (
     <main className="w-full bg-white py-12 sm:py-14">
       <section className="w-full">
+
         {/* Gallery Heading */}
         <div className="mb-8 px-4 text-center sm:mb-10">
-
-            <h2 className="pb-4 text-3xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
-              School{" "}
-              <span className="text-[#be9939]">
-                Gallery
-              </span>
-            </h2>
+          <h2 className="pb-4 text-3xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
+            School{" "}
+            <span className="text-[#be9939]">
+              Gallery
+            </span>
+          </h2>
 
           <div className="mx-auto mt-5 h-1.5 w-20 rounded-full bg-amber-400" />
-
         </div>
 
         {/* Gallery Carousel */}
@@ -85,12 +128,12 @@ export default function PhotoGalleryPage() {
           >
             {galleryImages.map((image) => (
               <div
-                key={image.src}
+                key={image._id}
                 className="w-1/4 min-w-0 flex-none px-1.5 sm:px-2"
               >
                 <div className="overflow-hidden rounded-lg shadow-sm sm:rounded-xl">
                   <img
-                    src={image.src}
+                    src={image.image}
                     alt={image.alt}
                     loading="lazy"
                     className="h-28 w-full object-cover transition-transform duration-500 hover:scale-105 sm:h-44 md:h-56 lg:h-72"
@@ -148,21 +191,20 @@ export default function PhotoGalleryPage() {
           </div>
         )}
 
-        
-{/* View More Button */}
-{galleryImages.length > 0 && (
-  <div className="mt-10 text-center">
-    <Link
-      href="/gallery/photo-gallery"
-      className="inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-[#07204f] px-5 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:shadow-lg"
-    >
-      View More Photos
-      <span className="text-lg" aria-hidden="true">
-        →
-      </span>
-    </Link>
-  </div>
-)}
+        {/* View More Button */}
+        {galleryImages.length > 0 && (
+          <div className="mt-10 text-center">
+            <Link
+              href="/gallery/photo-gallery"
+              className="inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-[#07204f] px-5 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:shadow-lg"
+            >
+              View More Photos
+              <span className="text-lg" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          </div>
+        )}
 
       </section>
     </main>
