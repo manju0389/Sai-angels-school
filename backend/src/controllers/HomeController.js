@@ -1,4 +1,4 @@
-import Home, { Topper } from "../models/Home.js";
+import Home, { Topper, Gallery } from "../models/Home.js";
 import cloudinary from "../config/cloudinary.js";
 
 // Upload image buffer to Cloudinary
@@ -474,3 +474,280 @@ export const toggleTopperStatus = async (req, res) => {
     });
   }
 };
+
+
+// ==========================================
+// GALLERY
+// ==========================================
+
+// GET ALL GALLERY IMAGES - ADMIN
+export const getGallery = async (req, res) => {
+  try {
+    const gallery = await Gallery.find().sort({
+      order: 1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      gallery,
+      total: gallery.length,
+      limit: 10,
+    });
+  } catch (error) {
+    console.error("Get gallery error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch gallery images",
+    });
+  }
+};
+
+// GET ACTIVE GALLERY IMAGES - PUBLIC WEBSITE
+export const getActiveGallery = async (req, res) => {
+  try {
+    const gallery = await Gallery.find({
+      isActive: true,
+    }).sort({
+      order: 1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      gallery,
+    });
+  } catch (error) {
+    console.error("Get active gallery error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch gallery images",
+    });
+  }
+};
+
+// ADD GALLERY IMAGE
+export const uploadGalleryImage = async (req, res) => {
+  let uploadedImage = null;
+
+  try {
+    const { alt } = req.body;
+
+    if (!alt?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Image description is required",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a gallery image",
+      });
+    }
+
+    // Maximum 10 images, including inactive images
+    const totalImages = await Gallery.countDocuments();
+
+    if (totalImages >= 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Gallery limit reached. Maximum 10 images are allowed. Delete an existing image to upload another.",
+        total: totalImages,
+        limit: 10,
+      });
+    }
+
+    uploadedImage = await uploadToCloudinary(
+      req.file.buffer,
+      "sai-angels-school/gallery"
+    );
+
+    const galleryImage = await Gallery.create({
+      image: uploadedImage.secure_url,
+      publicId: uploadedImage.public_id,
+      alt: alt.trim(),
+      isActive: true,
+      order: totalImages,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Gallery image uploaded successfully",
+      galleryImage,
+    });
+  } catch (error) {
+    if (uploadedImage?.public_id) {
+      try {
+        await cloudinary.uploader.destroy(uploadedImage.public_id);
+      } catch (cleanupError) {
+        console.error("Gallery upload cleanup failed:", cleanupError);
+      }
+    }
+
+    console.error("Upload gallery image error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload gallery image",
+    });
+  }
+};
+
+// UPDATE GALLERY IMAGE
+export const updateGalleryImage = async (req, res) => {
+  let uploadedImage = null;
+
+  try {
+    const { id } = req.params;
+    const { alt } = req.body;
+
+    const galleryImage = await Gallery.findById(id);
+
+    if (!galleryImage) {
+      return res.status(404).json({
+        success: false,
+        message: "Gallery image not found",
+      });
+    }
+
+    if (alt !== undefined && !alt.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Image description cannot be empty",
+      });
+    }
+
+    const oldPublicId = galleryImage.publicId;
+
+    if (req.file) {
+      uploadedImage = await uploadToCloudinary(
+        req.file.buffer,
+        "sai-angels-school/gallery"
+      );
+
+      galleryImage.image = uploadedImage.secure_url;
+      galleryImage.publicId = uploadedImage.public_id;
+    }
+
+    if (alt !== undefined) {
+      galleryImage.alt = alt.trim();
+    }
+
+    try {
+      await galleryImage.save();
+    } catch (saveError) {
+      if (uploadedImage?.public_id) {
+        await cloudinary.uploader.destroy(uploadedImage.public_id);
+      }
+
+      throw saveError;
+    }
+
+    // Delete old image only after successful update
+    if (uploadedImage && oldPublicId) {
+      try {
+        await cloudinary.uploader.destroy(oldPublicId);
+      } catch (cleanupError) {
+        console.error("Old gallery image cleanup failed:", cleanupError);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Gallery image updated successfully",
+      galleryImage,
+    });
+  } catch (error) {
+    console.error("Update gallery image error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update gallery image",
+    });
+  }
+};
+
+// DELETE GALLERY IMAGE
+export const deleteGalleryImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const galleryImage = await Gallery.findById(id);
+
+    if (!galleryImage) {
+      return res.status(404).json({
+        success: false,
+        message: "Gallery image not found",
+      });
+    }
+
+    // Delete Cloudinary image first
+    if (galleryImage.publicId) {
+      const result = await cloudinary.uploader.destroy(
+        galleryImage.publicId
+      );
+
+      if (
+        result.result !== "ok" &&
+        result.result !== "not found"
+      ) {
+        return res.status(502).json({
+          success: false,
+          message: "Cloudinary image could not be deleted. Gallery image was not removed from MongoDB.",
+        });
+      }
+    }
+
+    await Gallery.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Gallery image deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete gallery image error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete gallery image",
+    });
+  }
+};
+
+// ACTIVATE / DEACTIVATE GALLERY IMAGE
+export const toggleGalleryStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const galleryImage = await Gallery.findById(id);
+
+    if (!galleryImage) {
+      return res.status(404).json({
+        success: false,
+        message: "Gallery image not found",
+      });
+    }
+
+    galleryImage.isActive = !galleryImage.isActive;
+
+    await galleryImage.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Gallery image status updated",
+      galleryImage,
+    });
+  } catch (error) {
+    console.error("Toggle gallery status error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update gallery image status",
+    });
+  }
+};
+
