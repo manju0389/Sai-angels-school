@@ -20,6 +20,12 @@ import {
   updateGalleryImage,
   deleteGalleryImage,
   toggleGalleryStatus,
+  getNews,
+  getActiveNews,
+  addNews,
+  updateNews,
+  deleteNews,
+  toggleNewsStatus,
 } from "../controllers/HomeController.js";
 
 const router = express.Router();
@@ -64,6 +70,16 @@ router.post("/toppers", upload.single("poster"), uploadTopper);
 router.put("/toppers/:id", upload.single("poster"), updateTopper);
 router.delete("/toppers/:id", deleteTopper);
 router.patch("/toppers/:id/status", toggleTopperStatus);
+
+// ==========================================
+// RECENT NEWS ROUTES
+// ==========================================
+router.get("/news/active", getActiveNews);
+router.get("/news", getNews);
+router.post("/news", addNews);
+router.put("/news/:id", updateNews);
+router.delete("/news/:id", deleteNews);
+router.patch("/news/:id/status", toggleNewsStatus);
 
 // ==========================================
 // GALLERY ROUTES
