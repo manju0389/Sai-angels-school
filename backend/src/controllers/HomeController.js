@@ -1,4 +1,4 @@
-import Home, { Topper, Gallery, News } from "../models/Home.js";
+import Home, { Topper, Gallery, News, Testimonial } from "../models/Home.js";
 import cloudinary from "../config/cloudinary.js";
 
 // Upload image buffer to Cloudinary
@@ -221,6 +221,185 @@ export const toggleBannerStatus = async (req, res) => {
     });
   }
 };
+
+// ==========================================
+// GET ALL TESTIMONIALS
+// ==========================================
+
+export const getTestimonials = async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find().sort({
+      order: 1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      testimonials,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// GET ACTIVE TESTIMONIALS
+export const getActiveTestimonials = async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find({
+      isActive: true,
+    }).sort({
+      order: 1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      testimonials,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ADD TESTIMONIAL
+export const addTestimonial = async (req, res) => {
+  try {
+    const {
+      name,
+      role,
+      message,
+      initials,
+      color,
+    } = req.body;
+
+    if (!name || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and message are required",
+      });
+    }
+
+    const count = await Testimonial.countDocuments();
+
+    const testimonial = await Testimonial.create({
+      name,
+      role: role || "Parent Testimonial",
+      message,
+      initials: initials || name.charAt(0).toUpperCase(),
+      color: color || "bg-purple-100 text-purple-700",
+      isActive: true,
+      order: count,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Testimonial added successfully",
+      testimonial,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// UPDATE TESTIMONIAL
+export const updateTestimonial = async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: req.body.name,
+        role: req.body.role,
+        message: req.body.message,
+        initials: req.body.initials,
+        color: req.body.color,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: "Testimonial not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Testimonial updated successfully",
+      testimonial,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// DELETE TESTIMONIAL
+export const deleteTestimonial = async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: "Testimonial not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Testimonial deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ACTIVATE / DEACTIVATE TESTIMONIAL
+export const toggleTestimonialStatus = async (req, res) => {
+  try {
+    const testimonial = await Testimonial.findById(req.params.id);
+
+    if (!testimonial) {
+      return res.status(404).json({
+        success: false,
+        message: "Testimonial not found",
+      });
+    }
+
+    testimonial.isActive = !testimonial.isActive;
+
+    await testimonial.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Testimonial status updated",
+      testimonial,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 // ==========================================
 // TOPPERS
