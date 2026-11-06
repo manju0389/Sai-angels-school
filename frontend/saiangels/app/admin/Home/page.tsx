@@ -1657,6 +1657,7 @@ const handleGalleryStatus = async (id: string) => {
         <option value="Sports">Sports</option>
         <option value="Activities">Activities</option>
         <option value="General">General</option>
+        <option value="Holiday's List">Holiday's List</option>
       </select>
     </div>
 
