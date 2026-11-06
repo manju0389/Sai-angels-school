@@ -38,8 +38,8 @@ const programs = [
 
 const AcademicPrograms = () => {
   return (
-   <section className="relative w-full overflow-hidden bg-[#ffede4] py-16 sm:py-20 lg:py-16">
-      <div className="container relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+   <section className="relative w-full overflow-hidden bg-[#ffede4] py-16 sm:py-20 lg:py-12">
+      <div className="container mx-auto px-3">
       {/* Background decorations */}
       <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-100/60 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-amber-100/60 blur-3xl" />
