@@ -47,7 +47,7 @@ export default function ChairmanMessage() {
   return (
     <>
       {/* CHAIRMAN MESSAGE */}
-       <section className="relative w-full overflow-hidden bg-[#ffede4] py-16 sm:py-20 lg:py-12">
+       <section className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-12">
         <div className="container mx-auto px-3">
         {/* Background Decorations */}
         <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-50 blur-3xl" />
