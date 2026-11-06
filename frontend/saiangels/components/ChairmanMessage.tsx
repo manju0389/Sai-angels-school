@@ -95,13 +95,6 @@ export default function ChairmanMessage() {
                   opportunities for students to explore their talents both
                   inside and outside the classroom.
                 </p>
-
-                <p>
-                  Together with our teachers and parents, we strive to build
-                  a supportive learning community that encourages children
-                  to dream big, embrace challenges, and contribute positively
-                  to society.
-                </p>
               </div>
             </div>
 
