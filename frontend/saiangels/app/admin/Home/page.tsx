@@ -99,6 +99,9 @@ const [newsDescription, setNewsDescription] = useState("");
 const [newsLink, setNewsLink] = useState("");
 const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
 
+  // THOUGHT FOR THE DAY STATES
+const [thoughtQuote, setThoughtQuote] = useState("");
+
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const galleryEditingId = useRef<string | null>(null);
   
@@ -120,6 +123,24 @@ const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
       setError(err instanceof Error ? err.message : "Failed to load banners");
     }
   };
+
+  // FETCH THOUGHT FOR THE DAY
+const fetchThought = async () => {
+  try {
+    const response = await fetch(`${API}/thought`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch thought");
+    }
+
+    setThoughtQuote(data.thought?.quote || "");
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to load thought"
+    );
+  }
+};
 
   // FETCH TESTIMONIALS
 const fetchTestimonials = async () => {
@@ -161,7 +182,8 @@ const fetchTestimonials = async () => {
   fetchGallery();
   fetchNews();
   fetchTestimonials();
-}, []); 
+  fetchThought();
+}, []);
 
 
   // FETCH NEWS
@@ -367,6 +389,45 @@ const fetchGallery = async () => {
       setError(err instanceof Error ? err.message : "Status update failed");
     }
   };
+
+  // SAVE / UPDATE THOUGHT
+const handleThoughtSubmit = async () => {
+  if (!thoughtQuote.trim()) {
+    setError("Please enter the thought for the day");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/thought`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        quote: thoughtQuote.trim(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save thought");
+    }
+
+    setThoughtQuote(data.thought?.quote || thoughtQuote.trim());
+    setMessage("Thought for the Day updated successfully!");
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to save thought"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   // RESET TOPPER FORM
   const resetTopperForm = () => {
@@ -2101,6 +2162,71 @@ const handleGalleryStatus = async (id: string) => {
   </div>
 
 </section>
+
+
+<hr className="my-10 border-gray-400" />
+            
+{/* THOUGHT FOR THE DAY MANAGEMENT */}
+<section className="space-y-6">
+
+  <div>
+    <h2 className="text-3xl font-semibold text-gray-900">
+      Thought for the Day
+    </h2>
+
+    <p className="mt-2 text-gray-600">
+      Update the inspirational quote displayed on the home page.
+    </p>
+  </div>
+
+  <div className="space-y-5 rounded-lg border border-gray-300 bg-white p-6">
+
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Thought / Quote
+      </label>
+
+      <textarea
+        value={thoughtQuote}
+        onChange={(e) => setThoughtQuote(e.target.value)}
+        placeholder="Enter the thought for the day..."
+        rows={5}
+        maxLength={1000}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+
+      <p className="mt-2 text-sm text-gray-500">
+        {thoughtQuote.length}/1000 characters
+      </p>
+    </div>
+
+    {thoughtQuote.trim() && (
+      <div className="rounded-lg bg-blue-950 p-6 text-center text-white">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-amber-300">
+          Thought Preview
+        </p>
+
+        <p className="text-lg font-medium leading-relaxed">
+          "{thoughtQuote}"
+        </p>
+      </div>
+    )}
+
+    <button
+      type="button"
+      onClick={handleThoughtSubmit}
+      disabled={loading || !thoughtQuote.trim()}
+      className="cursor-pointer rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {loading ? "Please wait..." : "Save Thought"}
+    </button>
+
+  </div>
+
+</section>
+
+<hr className="my-10 border-gray-400" />
+
 
 
           </div>
