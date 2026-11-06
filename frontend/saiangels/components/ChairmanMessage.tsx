@@ -49,9 +49,6 @@ export default function ChairmanMessage() {
       {/* CHAIRMAN MESSAGE */}
        <section className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-12">
         <div className="container mx-auto px-3">
-        {/* Background Decorations */}
-        <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-50 blur-3xl" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-amber-50 blur-3xl" />
 
  
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
