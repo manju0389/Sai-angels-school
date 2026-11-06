@@ -148,25 +148,27 @@ export default function SchoolTestimonial() {
                       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-600 to-orange-400" />
 
                       {/* Quote and Stars */}
-                      <div className="mb-5 flex items-center justify-between">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-4xl font-bold leading-none text-purple-700 transition-colors group-hover:bg-purple-700 group-hover:text-white">
-                          “
-                        </div>
-
-                        <div className="flex justify-center gap-1 mb-4">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span
-                                key={star}
-                                className={
-                                  star <= testimonial.rating
-                                    ? "text-yellow-400"
-                                    : "text-gray-300"
-                                }
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
+                            <div className="mb-5 flex items-center justify-between">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-4xl font-bold leading-none text-purple-700 transition-colors group-hover:bg-purple-700 group-hover:text-white">
+                                “
+                              </div>
+                            
+                              {/* Dynamic Star Rating */}
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={
+                                      star <= (testimonial.rating ?? 5)
+                                        ? "text-yellow-400"
+                                        : "text-gray-300"
+                                    }
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
 
                       {/* Message */}
                       <p className="flex-1 text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
