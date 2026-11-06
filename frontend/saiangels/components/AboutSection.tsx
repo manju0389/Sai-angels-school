@@ -38,8 +38,8 @@ const awards = [
 
 export default function AboutSection() {
   return (
-    <section className="overflow-hidden bg-white py-16 sm:py-20 lg:py-15">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+   <section className="bg-white py-16 sm:py-20 lg:py-16">
+    <div className="container mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
 
         {/* Main Content */}
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
