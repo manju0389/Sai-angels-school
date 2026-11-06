@@ -276,25 +276,25 @@ export const addTestimonial = async (req, res) => {
       message,
       initials,
       color,
+      rating,
     } = req.body;
 
-    if (!name || !message) {
+    if (!name?.trim() || !message?.trim()) {
       return res.status(400).json({
         success: false,
         message: "Name and message are required",
       });
     }
 
-    const count = await Testimonial.countDocuments();
-
     const testimonial = await Testimonial.create({
-      name,
+      name: name.trim(),
       role: role || "Parent Testimonial",
-      message,
+      message: message.trim(),
       initials: initials || name.charAt(0).toUpperCase(),
       color: color || "bg-purple-100 text-purple-700",
+      rating: Number(rating ?? 5),
       isActive: true,
-      order: count,
+      order: await Testimonial.countDocuments(),
     });
 
     res.status(201).json({
@@ -303,6 +303,8 @@ export const addTestimonial = async (req, res) => {
       testimonial,
     });
   } catch (error) {
+    console.error("Add testimonial error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -321,8 +323,12 @@ export const updateTestimonial = async (req, res) => {
         message: req.body.message,
         initials: req.body.initials,
         color: req.body.color,
+        rating: Number(req.body.rating ?? 5),
       },
-      { new: true, runValidators: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!testimonial) {
@@ -338,6 +344,8 @@ export const updateTestimonial = async (req, res) => {
       testimonial,
     });
   } catch (error) {
+    console.error("Update testimonial error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
