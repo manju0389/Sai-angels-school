@@ -2,6 +2,51 @@
 import mongoose from "mongoose";
 
 // ==========================================
+// RECENT NEWS MODEL
+// ==========================================
+const NewsSchema = new mongoose.Schema(
+  {
+    date: {
+      type: Date,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    link: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+const News =
+  mongoose.models.News ||
+  mongoose.model("News", NewsSchema);
+
+// ==========================================
 // BANNER MODEL
 // ==========================================
 
@@ -110,5 +155,5 @@ const Gallery =
   mongoose.models.Gallery ||
   mongoose.model("Gallery", GallerySchema);
 
-export { Topper, Gallery };
+export { Topper, Gallery, News };
 export default Home;
