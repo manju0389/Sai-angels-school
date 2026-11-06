@@ -11,6 +11,17 @@ interface Banner {
   order: number;
 }
 
+interface Testimonial {
+  _id: string;
+  name: string;
+  role: string;
+  message: string;
+  initials: string;
+  color: string;
+  isActive: boolean;
+  order: number;
+}
+
 interface Topper {
   _id: string;
   name: string;
@@ -59,6 +70,17 @@ export default function HomePage() {
   const [topperPreview, setTopperPreview] = useState("");
   const [editingTopperId, setEditingTopperId] = useState<string | null>(null);
 
+  // TESTIMONIALS STATES
+const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+const [testimonialName, setTestimonialName] = useState("");
+const [testimonialRole, setTestimonialRole] = useState("Parent Testimonial");
+const [testimonialMessage, setTestimonialMessage] = useState("");
+const [testimonialInitials, setTestimonialInitials] = useState("P");
+const [testimonialColor, setTestimonialColor] = useState(
+  "bg-purple-100 text-purple-700"
+);
+const [editingTestimonialId, setEditingTestimonialId] = useState<string | null>(null);
+
   // GALLERY STATES
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [galleryFile, setGalleryFile] = useState<File | null>(null);
@@ -97,6 +119,24 @@ const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
     }
   };
 
+  // FETCH TESTIMONIALS
+const fetchTestimonials = async () => {
+  try {
+    const response = await fetch(`${API}/testimonials`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch testimonials");
+    }
+
+    setTestimonials(data.testimonials || []);
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to load testimonials"
+    );
+  }
+};
+
   // FETCH TOPPERS
   const fetchToppers = async () => {
     try {
@@ -118,7 +158,8 @@ const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
   fetchToppers();
   fetchGallery();
   fetchNews();
-}, []);  
+  fetchTestimonials();
+}, []); 
 
 
   // FETCH NEWS
@@ -491,6 +532,162 @@ const fetchGallery = async () => {
       setLoading(false);
     }
   };
+
+
+  // ==========================================
+// TESTIMONIALS MANAGEMENT
+// ==========================================
+
+// RESET TESTIMONIAL FORM
+const resetTestimonialForm = () => {
+  setTestimonialName("");
+  setTestimonialRole("Parent Testimonial");
+  setTestimonialMessage("");
+  setTestimonialInitials("P");
+  setTestimonialColor("bg-purple-100 text-purple-700");
+  setEditingTestimonialId(null);
+};
+
+// ADD OR UPDATE TESTIMONIAL
+const handleTestimonialSubmit = async () => {
+  if (!testimonialName.trim() || !testimonialMessage.trim()) {
+    setError("Please enter parent name and testimonial message");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const payload = {
+      name: testimonialName.trim(),
+      role: testimonialRole.trim(),
+      message: testimonialMessage.trim(),
+      initials:
+        testimonialInitials.trim() ||
+        testimonialName.trim().charAt(0).toUpperCase(),
+      color: testimonialColor,
+    };
+
+    const url = editingTestimonialId
+      ? `${API}/testimonials/${editingTestimonialId}`
+      : `${API}/testimonials`;
+
+    const response = await fetch(url, {
+      method: editingTestimonialId ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save testimonial");
+    }
+
+    setMessage(
+      editingTestimonialId
+        ? "Testimonial updated successfully!"
+        : "Testimonial added successfully!"
+    );
+
+    resetTestimonialForm();
+    await fetchTestimonials();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to save testimonial"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// EDIT TESTIMONIAL
+const handleTestimonialEdit = (item: Testimonial) => {
+  setEditingTestimonialId(item._id);
+  setTestimonialName(item.name);
+  setTestimonialRole(item.role || "Parent Testimonial");
+  setTestimonialMessage(item.message);
+  setTestimonialInitials(item.initials || "P");
+  setTestimonialColor(
+    item.color || "bg-purple-100 text-purple-700"
+  );
+
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth",
+  });
+};
+
+// DELETE TESTIMONIAL
+const handleTestimonialDelete = async (id: string) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this testimonial?"
+  );
+
+  if (!confirmed) return;
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/testimonials/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete testimonial");
+    }
+
+    setMessage("Testimonial deleted successfully!");
+
+    if (editingTestimonialId === id) {
+      resetTestimonialForm();
+    }
+
+    await fetchTestimonials();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to delete testimonial"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// TESTIMONIAL STATUS
+const handleTestimonialStatus = async (id: string) => {
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/testimonials/${id}/status`, {
+      method: "PATCH",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Status update failed");
+    }
+
+    setMessage("Testimonial status updated successfully!");
+    await fetchTestimonials();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Status update failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   // ==========================================
@@ -1627,6 +1824,253 @@ const handleGalleryStatus = async (id: string) => {
     {news.length === 0 && (
       <p className="py-10 text-center text-gray-500">
         No news announcements added yet.
+      </p>
+    )}
+
+  </div>
+
+</section>
+
+
+            <hr className="my-10 border-gray-400" />
+
+{/* TESTIMONIALS MANAGEMENT */}
+<section className="space-y-6">
+
+  <div>
+    <h2 className="text-3xl font-semibold text-gray-900">
+      Parent Testimonials
+    </h2>
+
+    <p className="mt-2 text-gray-600">
+      Add, edit, activate or delete parent and student testimonials.
+    </p>
+  </div>
+
+  {/* TESTIMONIAL FORM */}
+  <div className="space-y-5 rounded-lg border border-gray-300 bg-white p-6">
+
+    <h3 className="text-xl font-semibold text-gray-800">
+      {editingTestimonialId
+        ? "Edit Testimonial"
+        : "Add New Testimonial"}
+    </h3>
+
+    {/* NAME */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Parent / Student Name
+      </label>
+
+      <input
+        type="text"
+        value={testimonialName}
+        onChange={(e) => setTestimonialName(e.target.value)}
+        placeholder="Example: Parent of a Student"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* ROLE */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Role
+      </label>
+
+      <input
+        type="text"
+        value={testimonialRole}
+        onChange={(e) => setTestimonialRole(e.target.value)}
+        placeholder="Example: Parent Testimonial"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* MESSAGE */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Testimonial Message
+      </label>
+
+      <textarea
+        value={testimonialMessage}
+        onChange={(e) => setTestimonialMessage(e.target.value)}
+        placeholder="Enter parent testimonial"
+        rows={5}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* INITIALS */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Avatar Initials
+      </label>
+
+      <input
+        type="text"
+        maxLength={3}
+        value={testimonialInitials}
+        onChange={(e) => setTestimonialInitials(e.target.value)}
+        placeholder="Example: P"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* AVATAR COLOR */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Avatar Color
+      </label>
+
+      <select
+        value={testimonialColor}
+        onChange={(e) => setTestimonialColor(e.target.value)}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      >
+        <option value="bg-purple-100 text-purple-700">Purple</option>
+        <option value="bg-orange-100 text-orange-700">Orange</option>
+        <option value="bg-emerald-100 text-emerald-700">Emerald</option>
+        <option value="bg-sky-100 text-sky-700">Sky Blue</option>
+        <option value="bg-rose-100 text-rose-700">Rose</option>
+        <option value="bg-amber-100 text-amber-700">Amber</option>
+      </select>
+
+      <div className="mt-3">
+        <span
+          className={`inline-flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold ${testimonialColor}`}
+        >
+          {testimonialInitials || "P"}
+        </span>
+      </div>
+    </div>
+
+    {/* BUTTONS */}
+    <div className="flex flex-wrap gap-3">
+
+      <button
+        type="button"
+        onClick={handleTestimonialSubmit}
+        disabled={loading}
+        className="cursor-pointer rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+      >
+        {loading
+          ? "Please wait..."
+          : editingTestimonialId
+          ? "Update Testimonial"
+          : "Add Testimonial"}
+      </button>
+
+      {editingTestimonialId && (
+        <button
+          type="button"
+          onClick={resetTestimonialForm}
+          disabled={loading}
+          className="cursor-pointer rounded-md bg-gray-500 px-7 py-3 text-white hover:bg-gray-600 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      )}
+
+    </div>
+  </div>
+
+  {/* TESTIMONIALS TABLE */}
+  <div className="overflow-x-auto">
+
+    <table className="w-full border-collapse text-left">
+
+      <thead>
+        <tr className="bg-[#174b91] text-white">
+          <th className="px-4 py-5">S.No</th>
+          <th className="px-4 py-5">Name</th>
+          <th className="px-4 py-5">Role</th>
+          <th className="px-4 py-5">Message</th>
+          <th className="px-4 py-5">Avatar</th>
+          <th className="px-4 py-5">Status</th>
+          <th className="px-4 py-5">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {testimonials.map((item, index) => (
+          <tr
+            key={item._id}
+            className="border-b border-gray-400 bg-[#e9e9e9]"
+          >
+            <td className="px-4 py-5">{index + 1}</td>
+
+            <td className="px-4 py-5 font-medium">
+              {item.name}
+            </td>
+
+            <td className="px-4 py-5">
+              {item.role}
+            </td>
+
+            <td className="px-4 py-5">
+              <p className="max-w-sm text-sm text-gray-700">
+                {item.message}
+              </p>
+            </td>
+
+            <td className="px-4 py-5">
+              <span
+                className={`flex h-11 w-11 items-center justify-center rounded-full font-bold ${
+                  item.color || "bg-purple-100 text-purple-700"
+                }`}
+              >
+                {item.initials || "P"}
+              </span>
+            </td>
+
+            <td className="px-4 py-5">
+              <button
+                type="button"
+                onClick={() => handleTestimonialStatus(item._id)}
+                disabled={loading}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${
+                  item.isActive
+                    ? "bg-green-600"
+                    : "bg-gray-500"
+                }`}
+              >
+                {item.isActive ? "Active" : "Inactive"}
+              </button>
+            </td>
+
+            <td className="px-4 py-5">
+              <div className="flex flex-wrap gap-2">
+
+                <button
+                  type="button"
+                  onClick={() => handleTestimonialEdit(item)}
+                  disabled={loading}
+                  className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleTestimonialDelete(item._id)}
+                  disabled={loading}
+                  className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  Delete
+                </button>
+
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
+
+    {testimonials.length === 0 && (
+      <p className="py-10 text-center text-gray-500">
+        No testimonials added yet.
       </p>
     )}
 
