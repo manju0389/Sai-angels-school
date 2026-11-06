@@ -32,6 +32,8 @@ import {
   updateTestimonial,
   deleteTestimonial,
   toggleTestimonialStatus,
+  getThought,
+  updateThought,
 } from "../controllers/HomeController.js";
 
 const router = express.Router();
@@ -101,6 +103,16 @@ router.patch(
   "/testimonials/:id/status",
   toggleTestimonialStatus
 );
+
+// ==========================================
+// THOUGHT FOR THE DAY ROUTES
+// ==========================================
+
+// Public website - get current thought
+router.get("/thought", getThought);
+
+// Admin - add or update current thought
+router.put("/thought", updateThought);
 
 // ==========================================
 // GALLERY ROUTES
