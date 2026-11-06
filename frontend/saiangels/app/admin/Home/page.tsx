@@ -18,6 +18,7 @@ interface Testimonial {
   message: string;
   initials: string;
   color: string;
+  rating: number;
   isActive: boolean;
   order: number;
 }
@@ -76,9 +77,11 @@ const [testimonialName, setTestimonialName] = useState("");
 const [testimonialRole, setTestimonialRole] = useState("Parent Testimonial");
 const [testimonialMessage, setTestimonialMessage] = useState("");
 const [testimonialInitials, setTestimonialInitials] = useState("P");
+  const [testimonialRating, setTestimonialRating] = useState(5);
 const [testimonialColor, setTestimonialColor] = useState(
   "bg-purple-100 text-purple-700"
 );
+  const [testimonialRating, setTestimonialRating] = useState(5);
 const [editingTestimonialId, setEditingTestimonialId] = useState<string | null>(null);
 
   // GALLERY STATES
@@ -545,6 +548,7 @@ const resetTestimonialForm = () => {
   setTestimonialMessage("");
   setTestimonialInitials("P");
   setTestimonialColor("bg-purple-100 text-purple-700");
+  setTestimonialRating(5);
   setEditingTestimonialId(null);
 };
 
@@ -568,6 +572,7 @@ const handleTestimonialSubmit = async () => {
         testimonialInitials.trim() ||
         testimonialName.trim().charAt(0).toUpperCase(),
       color: testimonialColor,
+      rating: testimonialRating,
     };
 
     const url = editingTestimonialId
@@ -615,6 +620,7 @@ const handleTestimonialEdit = (item: Testimonial) => {
   setTestimonialColor(
     item.color || "bg-purple-100 text-purple-700"
   );
+  setTestimonialRating(item.rating ?? 5);
 
   window.scrollTo({
     top: document.body.scrollHeight,
@@ -1916,6 +1922,24 @@ const handleGalleryStatus = async (id: string) => {
         className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
       />
     </div>
+
+    <div>
+  <label className="block text-sm font-medium mb-2">
+    Star Rating
+  </label>
+
+  <select
+    value={testimonialRating}
+    onChange={(e) => setTestimonialRating(Number(e.target.value))}
+    className="w-full border rounded-lg p-3"
+  >
+    {[1, 2, 3, 4, 5].map((rating) => (
+      <option key={rating} value={rating}>
+        {rating} Star{rating > 1 ? "s" : ""}
+      </option>
+    ))}
+  </select>
+</div>
 
     {/* AVATAR COLOR */}
     <div>
