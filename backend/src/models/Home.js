@@ -2,6 +2,24 @@
 import mongoose from "mongoose";
 
 // ==========================================
+// Thought MODEL
+// ==========================================
+const ThoughtSchema = new mongoose.Schema(
+  {
+    quote: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Thought =
+  mongoose.models.Thought ||
+  mongoose.model("Thought", ThoughtSchema);
+
+// ==========================================
 // Testimonial MODEL
 // ==========================================
 const TestimonialSchema = new mongoose.Schema(
@@ -206,5 +224,5 @@ const Gallery =
   mongoose.models.Gallery ||
   mongoose.model("Gallery", GallerySchema);
 
-export { Topper, Gallery, News, Testimonial };
+export { Topper, Gallery, News, Testimonial, Thought };
 export default Home;
