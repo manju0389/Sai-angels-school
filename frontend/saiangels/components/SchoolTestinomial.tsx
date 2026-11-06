@@ -10,6 +10,7 @@ interface Testimonial {
   message: string;
   initials: string;
   color: string;
+  rating: number;
   isActive: boolean;
   order: number;
 }
@@ -152,17 +153,20 @@ export default function SchoolTestimonial() {
                           “
                         </div>
 
-                        <div
-                          className="flex gap-0.5 text-lg text-amber-400"
-                          aria-label="Sample five-star rating"
-                        >
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <span key={star} aria-hidden="true">
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                        <div className="flex justify-center gap-1 mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className={
+                                  star <= testimonial.rating
+                                    ? "text-yellow-400"
+                                    : "text-gray-300"
+                                }
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
 
                       {/* Message */}
                       <p className="flex-1 text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
