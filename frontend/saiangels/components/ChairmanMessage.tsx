@@ -47,7 +47,8 @@ export default function ChairmanMessage() {
   return (
     <>
       {/* CHAIRMAN MESSAGE */}
-      <section className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-14">
+       <section className="relative w-full overflow-hidden bg-[#ffede4] py-16 sm:py-20 lg:py-12">
+        <div className="container mx-auto px-3">
         {/* Background Decorations */}
         <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-50 blur-3xl" />
         <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-amber-50 blur-3xl" />
@@ -143,10 +144,12 @@ export default function ChairmanMessage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* MOTTO, VISION & MISSION */}
-      <section className="relative isolate overflow-hidden bg-orange-500 px-4 py-20 sm:px-6 lg:px-10">
+      <section className="relative isolate overflow-hidden bg-orange-500 px-4 py-16 sm:py-20 lg:py-12">
+      <div className="container mx-auto px-3">
       {/* Decorative top waves */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10">
         <svg
@@ -270,6 +273,7 @@ export default function ChairmanMessage() {
             strokeWidth="3"
           />
         </svg>
+      </div>
       </div>
     </section>
     </>
