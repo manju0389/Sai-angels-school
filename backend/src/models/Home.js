@@ -224,5 +224,5 @@ const Gallery =
   mongoose.models.Gallery ||
   mongoose.model("Gallery", GallerySchema);
 
-export { Topper, Gallery, News, Testimonial, Thought };
+export { Topper, Gallery, News, Testimonial };
 export default Home;
