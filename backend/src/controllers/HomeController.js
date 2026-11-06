@@ -1,4 +1,4 @@
-import Home, { Topper, Gallery } from "../models/Home.js";
+import Home, { Topper, Gallery, News } from "../models/Home.js";
 import cloudinary from "../config/cloudinary.js";
 
 // Upload image buffer to Cloudinary
@@ -471,6 +471,190 @@ export const toggleTopperStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to update topper status",
+    });
+  }
+};
+
+
+// ==========================================
+// GET ALL NEWS - ADMIN
+// ==========================================
+
+export const getNews = async (req, res) => {
+  try {
+    const news = await News.find().sort({
+      order: 1,
+      date: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      news,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// GET ACTIVE NEWS - PUBLIC
+export const getActiveNews = async (req, res) => {
+  try {
+    const news = await News.find({
+      isActive: true,
+    }).sort({
+      order: 1,
+      date: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      news,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ADD NEWS
+export const addNews = async (req, res) => {
+  try {
+    const {
+      date,
+      category,
+      title,
+      description,
+      link,
+    } = req.body;
+
+    if (!date || !category || !title || !description) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all required fields",
+      });
+    }
+
+    const count = await News.countDocuments();
+
+    const news = await News.create({
+      date,
+      category,
+      title,
+      description,
+      link: link || "",
+      isActive: true,
+      order: count,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "News added successfully",
+      news,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// UPDATE NEWS
+export const updateNews = async (req, res) => {
+  try {
+    const news = await News.findById(req.params.id);
+
+    if (!news) {
+      return res.status(404).json({
+        success: false,
+        message: "News not found",
+      });
+    }
+
+    const {
+      date,
+      category,
+      title,
+      description,
+      link,
+      order,
+    } = req.body;
+
+    if (date !== undefined) news.date = date;
+    if (category !== undefined) news.category = category;
+    if (title !== undefined) news.title = title;
+    if (description !== undefined) news.description = description;
+    if (link !== undefined) news.link = link;
+    if (order !== undefined) news.order = Number(order);
+
+    await news.save();
+
+    res.status(200).json({
+      success: true,
+      message: "News updated successfully",
+      news,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// DELETE NEWS
+export const deleteNews = async (req, res) => {
+  try {
+    const news = await News.findByIdAndDelete(req.params.id);
+
+    if (!news) {
+      return res.status(404).json({
+        success: false,
+        message: "News not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "News deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ACTIVATE / DEACTIVATE NEWS
+export const toggleNewsStatus = async (req, res) => {
+  try {
+    const news = await News.findById(req.params.id);
+
+    if (!news) {
+      return res.status(404).json({
+        success: false,
+        message: "News not found",
+      });
+    }
+
+    news.isActive = !news.isActive;
+    await news.save();
+
+    res.status(200).json({
+      success: true,
+      message: "News status updated successfully",
+      news,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
