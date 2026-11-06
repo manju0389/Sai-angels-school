@@ -25,6 +25,7 @@ const categoryColors: Record<string, string> = {
   Sports: "bg-orange-100 text-orange-700",
   Activities: "bg-pink-100 text-pink-700",
   General: "bg-gray-100 text-gray-700",
+  Holiday's List: "bg-red-100 text-red-700",
 };
 
 export default function RecentNews() {
