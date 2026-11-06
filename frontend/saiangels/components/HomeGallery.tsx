@@ -100,7 +100,8 @@ export default function PhotoGalleryPage() {
 
   return (
     <main className="w-full bg-white py-12 sm:py-14">
-      <section className="w-full">
+    <section className="w-full">
+    <div className="container mx-auto px-3">
 
         {/* Gallery Heading */}
         <div className="mb-8 px-4 text-center sm:mb-10">
@@ -205,7 +206,7 @@ export default function PhotoGalleryPage() {
             </Link>
           </div>
         )}
-
+    </div>
       </section>
     </main>
   );
