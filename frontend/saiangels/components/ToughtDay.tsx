@@ -1,7 +1,38 @@
-import React from "react";
+
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { FaQuoteLeft, FaSun } from "react-icons/fa";
 
+const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
+
+const DEFAULT_QUOTE =
+  "Education is the most powerful weapon which you can use to change the world.";
+
+interface Thought {
+  quote: string;
+}
+
 const ToughtDay = () => {
+  const [quote, setQuote] = useState(DEFAULT_QUOTE);
+
+  useEffect(() => {
+    const fetchThought = async () => {
+      try {
+        const response = await fetch(`${API}/thought`);
+        const data = await response.json();
+
+        if (response.ok && data.success && data.thought?.quote) {
+          setQuote(data.thought.quote);
+        }
+      } catch (error) {
+        console.error("Error fetching thought:", error);
+      }
+    };
+
+    fetchThought();
+  }, []);
+
   return (
     <section className="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 mt-10 rounded-3xl">
       <div className="mx-auto max-w-5xl">
@@ -23,8 +54,7 @@ const ToughtDay = () => {
             <FaQuoteLeft className="mx-auto mb-5 text-3xl text-amber-300" />
 
             <blockquote className="mx-auto max-w-3xl text-xl font-medium leading-9 text-blue-50 sm:text-2xl sm:leading-10">
-              "Education is the most powerful weapon which you can use to
-              change the world."
+              "{quote}"
             </blockquote>
 
             <div className="mx-auto my-7 h-1 w-20 rounded-full bg-amber-400" />
@@ -39,7 +69,7 @@ const ToughtDay = () => {
           </div>
         </div>
 
-        <img src="/images/image2.jpg"></img>
+        <img src="/images/image2.jpg" alt="Thought for the Day" />
       </div>
     </section>
   );
