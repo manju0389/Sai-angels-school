@@ -2,6 +2,51 @@
 import mongoose from "mongoose";
 
 // ==========================================
+// Testimonial MODEL
+// ==========================================
+const TestimonialSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    role: {
+      type: String,
+      default: "Parent Testimonial",
+      trim: true,
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    initials: {
+      type: String,
+      default: "P",
+      trim: true,
+    },
+    color: {
+      type: String,
+      default: "bg-purple-100 text-purple-700",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+const Testimonial =
+  mongoose.models.Testimonial ||
+  mongoose.model("Testimonial", TestimonialSchema);
+
+// ==========================================
 // RECENT NEWS MODEL
 // ==========================================
 const NewsSchema = new mongoose.Schema(
@@ -155,5 +200,5 @@ const Gallery =
   mongoose.models.Gallery ||
   mongoose.model("Gallery", GallerySchema);
 
-export { Topper, Gallery, News };
+export { Topper, Gallery, News, Testimonial };
 export default Home;
