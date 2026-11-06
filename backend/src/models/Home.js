@@ -30,6 +30,12 @@ const TestimonialSchema = new mongoose.Schema(
       type: String,
       default: "bg-purple-100 text-purple-700",
     },
+    rating: {
+    type: Number,
+    default: 5,
+    min: 1,
+    max: 5,
+  },
     isActive: {
       type: Boolean,
       default: true,
