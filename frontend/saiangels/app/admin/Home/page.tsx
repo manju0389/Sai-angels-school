@@ -30,6 +30,17 @@ interface GalleryImage {
   order: number;
 }
 
+interface News {
+  _id: string;
+  date: string;
+  category: string;
+  title: string;
+  description: string;
+  link: string;
+  isActive: boolean;
+  order: number;
+}
+
 const API = `${process.env.NEXT_PUBLIC_API_URL}/home`;
 
 export default function HomePage() {
@@ -54,6 +65,15 @@ export default function HomePage() {
   const [galleryPreview, setGalleryPreview] = useState("");
   const [galleryAlt, setGalleryAlt] = useState("");
   const [editingGalleryId, setEditingGalleryId] = useState<string | null>(null);
+
+  // NEWS STATES
+const [news, setNews] = useState<News[]>([]);
+const [newsDate, setNewsDate] = useState("");
+const [newsCategory, setNewsCategory] = useState("Announcement");
+const [newsTitle, setNewsTitle] = useState("");
+const [newsDescription, setNewsDescription] = useState("");
+const [newsLink, setNewsLink] = useState("");
+const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
 
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const galleryEditingId = useRef<string | null>(null);
@@ -97,7 +117,27 @@ export default function HomePage() {
   fetchBanners();
   fetchToppers();
   fetchGallery();
-}, []);
+  fetchNews();
+}, []);  
+
+
+  // FETCH NEWS
+const fetchNews = async () => {
+  try {
+    const response = await fetch(`${API}/news`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch news");
+    }
+
+    setNews(data.news || []);
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to load news"
+    );
+  }
+};
 
   // FETCH GALLERY
 const fetchGallery = async () => {
@@ -451,6 +491,167 @@ const fetchGallery = async () => {
       setLoading(false);
     }
   };
+
+
+  // ==========================================
+// NEWS MANAGEMENT
+// ==========================================
+
+// RESET NEWS FORM
+const resetNewsForm = () => {
+  setNewsDate("");
+  setNewsCategory("Announcement");
+  setNewsTitle("");
+  setNewsDescription("");
+  setNewsLink("");
+  setEditingNewsId(null);
+};
+
+// ADD OR UPDATE NEWS
+const handleNewsSubmit = async () => {
+  if (
+    !newsDate ||
+    !newsCategory.trim() ||
+    !newsTitle.trim() ||
+    !newsDescription.trim()
+  ) {
+    setError("Please fill all required news fields");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const payload = {
+      date: newsDate,
+      category: newsCategory.trim(),
+      title: newsTitle.trim(),
+      description: newsDescription.trim(),
+      link: newsLink.trim(),
+    };
+
+    const url = editingNewsId
+      ? `${API}/news/${editingNewsId}`
+      : `${API}/news`;
+
+    const response = await fetch(url, {
+      method: editingNewsId ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save news");
+    }
+
+    setMessage(
+      editingNewsId
+        ? "News updated successfully!"
+        : "News added successfully!"
+    );
+
+    resetNewsForm();
+    await fetchNews();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to save news"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// EDIT NEWS
+const handleNewsEdit = (item: News) => {
+  setEditingNewsId(item._id);
+
+  setNewsDate(
+    item.date ? new Date(item.date).toISOString().slice(0, 10) : ""
+  );
+
+  setNewsCategory(item.category);
+  setNewsTitle(item.title);
+  setNewsDescription(item.description);
+  setNewsLink(item.link || "");
+
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth",
+  });
+};
+
+// DELETE NEWS
+const handleNewsDelete = async (id: string) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this news announcement?"
+  );
+
+  if (!confirmed) return;
+
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/news/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete news");
+    }
+
+    setMessage("News deleted successfully!");
+
+    if (editingNewsId === id) {
+      resetNewsForm();
+    }
+
+    await fetchNews();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Failed to delete news"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// NEWS STATUS
+const handleNewsStatus = async (id: string) => {
+  setLoading(true);
+  setError("");
+  setMessage("");
+
+  try {
+    const response = await fetch(`${API}/news/${id}/status`, {
+      method: "PATCH",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Status update failed");
+    }
+
+    setMessage("News status updated successfully!");
+    await fetchNews();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Status update failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   
 // ==========================================
@@ -1197,6 +1398,241 @@ const handleGalleryStatus = async (id: string) => {
                 )}
               </div>
             </section>
+
+
+            <hr className="my-10 border-gray-400" />
+
+{/* NEWS MANAGEMENT */}
+<section className="space-y-6">
+
+  <div>
+    <h2 className="text-3xl font-semibold text-gray-900">
+      News & Announcements
+    </h2>
+
+    <p className="mt-2 text-gray-600">
+      Add, edit, activate or delete school news and announcements.
+    </p>
+  </div>
+
+  {/* NEWS FORM */}
+  <div className="space-y-5 rounded-lg border border-gray-300 bg-white p-6">
+
+    <h3 className="text-xl font-semibold text-gray-800">
+      {editingNewsId ? "Edit News" : "Add New News"}
+    </h3>
+
+    {/* DATE */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        News Date
+      </label>
+
+      <input
+        type="date"
+        value={newsDate}
+        onChange={(e) => setNewsDate(e.target.value)}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* CATEGORY */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Category
+      </label>
+
+      <select
+        value={newsCategory}
+        onChange={(e) => setNewsCategory(e.target.value)}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      >
+        <option value="Announcement">Announcement</option>
+        <option value="Achievements">Achievements</option>
+        <option value="School Events">School Events</option>
+        <option value="Campus">Campus</option>
+        <option value="Admissions">Admissions</option>
+        <option value="Sports">Sports</option>
+        <option value="Activities">Activities</option>
+        <option value="General">General</option>
+      </select>
+    </div>
+
+    {/* TITLE */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        News Title
+      </label>
+
+      <input
+        type="text"
+        value={newsTitle}
+        onChange={(e) => setNewsTitle(e.target.value)}
+        placeholder="Enter news title"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* DESCRIPTION */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Description
+      </label>
+
+      <textarea
+        value={newsDescription}
+        onChange={(e) => setNewsDescription(e.target.value)}
+        placeholder="Enter news description"
+        rows={4}
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+    </div>
+
+    {/* LINK */}
+    <div>
+      <label className="mb-2 block font-medium text-gray-700">
+        Page Link (Optional)
+      </label>
+
+      <input
+        type="text"
+        value={newsLink}
+        onChange={(e) => setNewsLink(e.target.value)}
+        placeholder="Example: /admission"
+        className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+      />
+
+      <p className="mt-2 text-sm text-gray-500">
+        Enter the page URL to open when a visitor clicks the news.
+      </p>
+    </div>
+
+    {/* BUTTONS */}
+    <div className="flex flex-wrap gap-3">
+
+      <button
+        type="button"
+        onClick={handleNewsSubmit}
+        disabled={loading}
+        className="cursor-pointer rounded-md bg-blue-600 px-7 py-3 text-white hover:bg-blue-700 disabled:opacity-50"
+      >
+        {loading
+          ? "Please wait..."
+          : editingNewsId
+          ? "Update News"
+          : "Add News"}
+      </button>
+
+      {editingNewsId && (
+        <button
+          type="button"
+          onClick={resetNewsForm}
+          disabled={loading}
+          className="cursor-pointer rounded-md bg-gray-500 px-7 py-3 text-white hover:bg-gray-600 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      )}
+
+    </div>
+  </div>
+
+  {/* NEWS TABLE */}
+  <div className="overflow-x-auto">
+
+    <table className="w-full border-collapse text-left">
+
+      <thead>
+        <tr className="bg-[#174b91] text-white">
+          <th className="px-4 py-5">S.No</th>
+          <th className="px-4 py-5">Date</th>
+          <th className="px-4 py-5">Category</th>
+          <th className="px-4 py-5">Title</th>
+          <th className="px-4 py-5">Status</th>
+          <th className="px-4 py-5">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {news.map((item, index) => (
+          <tr
+            key={item._id}
+            className="border-b border-gray-400 bg-[#e9e9e9]"
+          >
+            <td className="px-4 py-5">
+              {index + 1}
+            </td>
+
+            <td className="px-4 py-5 whitespace-nowrap">
+              {new Date(item.date).toLocaleDateString("en-IN")}
+            </td>
+
+            <td className="px-4 py-5">
+              {item.category}
+            </td>
+
+            <td className="px-4 py-5 font-medium">
+              <div className="max-w-xs">
+                {item.title}
+                <p className="mt-1 text-sm font-normal text-gray-600">
+                  {item.description}
+                </p>
+              </div>
+            </td>
+
+            <td className="px-4 py-5">
+              <button
+                type="button"
+                onClick={() => handleNewsStatus(item._id)}
+                disabled={loading}
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${
+                  item.isActive
+                    ? "bg-green-600"
+                    : "bg-gray-500"
+                }`}
+              >
+                {item.isActive ? "Active" : "Inactive"}
+              </button>
+            </td>
+
+            <td className="px-4 py-5">
+              <div className="flex flex-wrap gap-2">
+
+                <button
+                  type="button"
+                  onClick={() => handleNewsEdit(item)}
+                  disabled={loading}
+                  className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNewsDelete(item._id)}
+                  disabled={loading}
+                  className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  Delete
+                </button>
+
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
+
+    {news.length === 0 && (
+      <p className="py-10 text-center text-gray-500">
+        No news announcements added yet.
+      </p>
+    )}
+
+  </div>
+
+</section>
 
 
           </div>
