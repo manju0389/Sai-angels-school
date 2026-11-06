@@ -38,7 +38,7 @@ const programs = [
 
 const AcademicPrograms = () => {
   return (
-    <section className="relative overflow-hidden bg-[#ffede4] px-5 py-16 sm:py-20 lg:py-13">
+   <section className="container mx-auto w-full bg-[#ffede4] px-5 py-16 sm:py-20 lg:py-16">
       {/* Background decorations */}
       <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-100/60 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-amber-100/60 blur-3xl" />
@@ -47,7 +47,7 @@ const AcademicPrograms = () => {
         {/* Section heading */}
         <div className="mx-auto mb-14 max-w-3xl text-center">
 
-            <h2 className="text-3xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
+            <h2 className="text-2xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
               Our Academic{" "}
               <span className="text-[#be9939]">
                 Programs
