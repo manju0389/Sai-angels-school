@@ -26,6 +26,12 @@ import {
   updateNews,
   deleteNews,
   toggleNewsStatus,
+  getTestimonials,
+  getActiveTestimonials,
+  addTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+  toggleTestimonialStatus,
 } from "../controllers/HomeController.js";
 
 const router = express.Router();
@@ -80,6 +86,21 @@ router.post("/news", addNews);
 router.put("/news/:id", updateNews);
 router.delete("/news/:id", deleteNews);
 router.patch("/news/:id/status", toggleNewsStatus);
+
+
+// ==========================================
+// Testimonials ROUTES
+// ==========================================
+
+router.get("/testimonials/active", getActiveTestimonials);
+router.get("/testimonials", getTestimonials);
+router.post("/testimonials", addTestimonial);
+router.put("/testimonials/:id", updateTestimonial);
+router.delete("/testimonials/:id", deleteTestimonial);
+router.patch(
+  "/testimonials/:id/status",
+  toggleTestimonialStatus
+);
 
 // ==========================================
 // GALLERY ROUTES
