@@ -281,7 +281,6 @@ export default function AmenitiesSection() {
 
         <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
 
-        <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           {/* Heading */}
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl lg:text-5xl">
@@ -343,7 +342,7 @@ export default function AmenitiesSection() {
                 </article>
               );
             })}
-          </div>
+        
         </div>
           </div>
       </section>
