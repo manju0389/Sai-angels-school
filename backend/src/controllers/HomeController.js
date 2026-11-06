@@ -1,4 +1,4 @@
-import Home, { Topper, Gallery, News, Testimonial } from "../models/Home.js";
+import Home, { Topper, Gallery, News, Testimonial, Thought } from "../models/Home.js";
 import cloudinary from "../config/cloudinary.js";
 
 // Upload image buffer to Cloudinary
@@ -1118,6 +1118,68 @@ export const toggleGalleryStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to update gallery image status",
+    });
+  }
+};
+
+
+// ==========================================
+// GET THOUGHT FOR THE DAY
+// ==========================================
+export const getThought = async (req, res) => {
+  try {
+    let thought = await Thought.findOne();
+
+    res.status(200).json({
+      success: true,
+      thought,
+    });
+  } catch (error) {
+    console.error("Get thought error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==========================================
+// UPDATE THOUGHT FOR THE DAY
+// ==========================================
+export const updateThought = async (req, res) => {
+  try {
+    const { quote } = req.body;
+
+    if (!quote || !quote.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Thought quote is required",
+      });
+    }
+
+    let thought = await Thought.findOne();
+
+    if (thought) {
+      thought.quote = quote.trim();
+      await thought.save();
+    } else {
+      thought = await Thought.create({
+        quote: quote.trim(),
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Thought updated successfully",
+      thought,
+    });
+  } catch (error) {
+    console.error("Update thought error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
