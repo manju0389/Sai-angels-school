@@ -81,7 +81,6 @@ const [testimonialInitials, setTestimonialInitials] = useState("P");
 const [testimonialColor, setTestimonialColor] = useState(
   "bg-purple-100 text-purple-700"
 );
-  const [testimonialRating, setTestimonialRating] = useState(5);
 const [editingTestimonialId, setEditingTestimonialId] = useState<string | null>(null);
 
   // GALLERY STATES
