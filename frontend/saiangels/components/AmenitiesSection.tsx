@@ -210,7 +210,8 @@ export default function AmenitiesSection() {
           SCHOOL AMENITIES
       ========================= */}
 
-      <section className="relative overflow-hidden bg-white px-5 py-16 sm:py-20 lg:py-16">
+      <section className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-12">
+          <div className="container mx-auto px-3">
         {/* Background Decorations */}
         <div className="pointer-events-none absolute -left-24 top-20 h-64 w-64 rounded-full bg-blue-100/50 blur-3xl" />
 
@@ -265,16 +266,16 @@ export default function AmenitiesSection() {
             })}
           </div>
         </div>
+          </div>
       </section>
 
       {/* =========================
           SCHOOL STATISTICS COUNTER
       ========================= */}
-
-      <section
-        ref={sectionRef}
-        className="relative overflow-hidden bg-slate-950 py-14 sm:py-10"
-      >
+      
+      <section ref={sectionRef} className="relative overflow-hidden bg-slate-950 py-16 sm:py-20 lg:py-12">
+          <div className="container mx-auto px-3">
+        
         {/* Background Decorations */}
         <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-blue-600/20 blur-3xl" />
 
@@ -344,6 +345,7 @@ export default function AmenitiesSection() {
             })}
           </div>
         </div>
+          </div>
       </section>
     </>
   );
