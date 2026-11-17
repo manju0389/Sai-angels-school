@@ -93,10 +93,10 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      className={`relative z-[100] w-full ${
+      className={`z-[100] w-full ${
         isHome
           ? "absolute left-0 top-0 bg-transparent"
-          : "bg-white shadow-sm"
+          : "relative bg-white shadow-sm"
       }`}
     >
       {/* TOP CONTACT BAR */}
@@ -108,7 +108,6 @@ export default function Header({ isHome = false }: HeaderProps) {
             href="mailto:saiangelsoffice@gmail.com"
             className="transition-colors hover:text-[#eab341]"
           >
-            <span className="mr-1">✉</span>
             Email: saiangelsoffice@gmail.com
           </a>
 
@@ -174,7 +173,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         </div>
       </div>
 
-      {/* FLOATING NAVIGATION */}
+      {/* FLOATING NAVIGATION BAR */}
       <div className="px-3 pt-4 md:px-6 md:pt-6">
         <div className="container relative mx-auto">
 
@@ -198,7 +197,7 @@ export default function Header({ isHome = false }: HeaderProps) {
             {/* LOGO DIVIDER */}
             <div className="absolute left-[105px] top-1/2 hidden h-12 w-px -translate-y-1/2 bg-gray-300 md:left-[132px] md:block" />
 
-            {/* DESKTOP MENU */}
+            {/* DESKTOP NAVIGATION */}
             <nav className="hidden min-w-0 flex-1 xl:block">
               <ul className="flex items-center justify-between gap-1">
 
@@ -265,10 +264,10 @@ export default function Header({ isHome = false }: HeaderProps) {
               </ul>
             </nav>
 
-            {/* HAMBURGER BUTTON */}
+            {/* MOBILE / TABLET HAMBURGER */}
             <button
               type="button"
-              className="ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f8f8fa] text-[#252047] shadow-sm transition-all duration-300 hover:bg-[#302477] hover:text-white"
+              className="ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f8f8fa] text-[#252047] shadow-sm transition-all duration-300 hover:bg-[#302477] hover:text-white xl:hidden"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
@@ -279,9 +278,9 @@ export default function Header({ isHome = false }: HeaderProps) {
         </div>
       </div>
 
-      {/* MOBILE / EXPANDED MENU */}
+      {/* MOBILE / TABLET EXPANDED MENU */}
       {mobileOpen && (
-        <nav className="relative z-[130] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl md:mx-6 xl:mx-auto xl:max-w-[1450px]">
+        <nav className="relative z-[130] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl xl:hidden md:mx-6">
           <ul className="px-3 py-3">
 
             {menu.map((item, index) => (
