@@ -87,7 +87,7 @@ export default function Header({ isHome = false }: HeaderProps) {
   ];
 
   return (
-   <header className={`w-full z-[100] shadow-md ${ isHome ? "absolute top-0 left-0" : "relative" }`}>
+   <header className={`w-full z-[100] shadow-md ${ isHome ? "absolute top-0 left-0 bg-transparent" : "relative bg-white" }`} >
       <div className="bg-[#003375] px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
