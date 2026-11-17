@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,12 +17,26 @@ interface HeaderProps {
   isHome?: boolean;
 }
 
+interface SubMenuItem {
+  name: string;
+  link: string;
+}
+
+interface MenuItem {
+  name: string;
+  link?: string;
+  submenu?: SubMenuItem[];
+}
+
 export default function Header({ isHome = false }: HeaderProps) {
-  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopDropdown, setDesktopDropdown] = useState<number | null>(null);
   const [mobileDropdown, setMobileDropdown] = useState<number | null>(null);
 
-  const menu = [
+  const headerRef = useRef<HTMLElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const menu: MenuItem[] = [
     { name: "Home", link: "/" },
 
     {
@@ -57,7 +71,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "DEO Certificate", link: "/cbse-school/deo-certificate" },
         { name: "Water Health Certificate", link: "/cbse-school/health-certificate" },
         { name: "Fee Structure", link: "/cbse-school/fee-structure" },
-        { name: "Annual Academic Calender", link: "/cbse-school/academic-calendar" },
+        { name: "Annual Academic Calendar", link: "/cbse-school/academic-calendar" },
         { name: "School Management Committee", link: "/cbse-school/smc" },
         { name: "Parents Teachers Association", link: "/cbse-school/pta" },
         { name: "Three years Result", link: "/cbse-school/results" },
@@ -91,12 +105,72 @@ export default function Header({ isHome = false }: HeaderProps) {
     { name: "Contact Us", link: "/contact-us" },
   ];
 
+  // Close dropdown when clicking outside the header
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        headerRef.current &&
+        !headerRef.current.contains(event.target as Node)
+      ) {
+        setDesktopDropdown(null);
+        setMobileOpen(false);
+        setMobileDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  // Clear pending desktop dropdown close
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  // Delayed close prevents dropdown flickering
+  const scheduleClose = () => {
+    cancelClose();
+
+    closeTimer.current = setTimeout(() => {
+      setDesktopDropdown(null);
+    }, 180);
+  };
+
+  // Toggle desktop dropdown
+  const toggleDesktopDropdown = (index: number) => {
+    cancelClose();
+
+    setDesktopDropdown((current) =>
+      current === index ? null : index
+    );
+  };
+
+  // Toggle mobile dropdown
+  const toggleMobileDropdown = (index: number) => {
+    setMobileDropdown((current) =>
+      current === index ? null : index
+    );
+  };
+
+  // Close all mobile navigation
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    setMobileDropdown(null);
+  };
+
   return (
     <header
-      className={`z-[100] w-full ${
+      ref={headerRef}
+      className={`relative z-[100] w-full ${
         isHome
           ? "absolute left-0 top-0 bg-transparent"
-          : "relative bg-white shadow-sm"
+          : "bg-white shadow-sm"
       }`}
     >
       {/* TOP CONTACT BAR */}
@@ -108,21 +182,25 @@ export default function Header({ isHome = false }: HeaderProps) {
             href="mailto:saiangelsoffice@gmail.com"
             className="transition-colors hover:text-[#eab341]"
           >
+            <span className="mr-1 text-[#eab341]">☎</span>
             Email: saiangelsoffice@gmail.com
           </a>
 
-          {/* PHONE NUMBERS */}
+          {/* PHONE */}
           <div className="flex flex-wrap items-center gap-1">
             <span className="mr-1 text-[#eab341]">☎</span>
             Mobile:
+
             <a href="tel:9632315633" className="hover:text-[#eab341]">
               9632315633
             </a>
             /
+
             <a href="tel:8277522020" className="hover:text-[#eab341]">
               8277522020
             </a>
             /
+
             <a href="tel:9448204444" className="hover:text-[#eab341]">
               9448204444
             </a>
@@ -173,16 +251,20 @@ export default function Header({ isHome = false }: HeaderProps) {
         </div>
       </div>
 
-      {/* FLOATING NAVIGATION BAR */}
+      {/* MAIN NAVIGATION */}
       <div className="px-3 pt-4 md:px-6 md:pt-6">
         <div className="container relative mx-auto">
 
           <div className="relative flex min-h-[76px] items-center rounded-full border border-white/60 bg-white/90 py-2 pl-[88px] pr-3 shadow-[0_8px_35px_rgba(0,0,0,0.15)] backdrop-blur-lg md:min-h-[94px] md:pl-[145px] md:pr-5">
 
-            {/* SCHOOL LOGO */}
+            {/* LOGO */}
             <Link
               href="/"
               className="absolute -left-1 top-1/2 z-20 flex h-[88px] w-[88px] -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg md:h-[125px] md:w-[125px]"
+              onClick={() => {
+                setDesktopDropdown(null);
+                closeMobileMenu();
+              }}
             >
               <Image
                 src="/images/logo.png"
@@ -204,17 +286,25 @@ export default function Header({ isHome = false }: HeaderProps) {
                 {menu.map((item, index) => (
                   <li
                     key={item.name}
-                    className="group relative"
+                    className="relative"
                     onMouseEnter={() => {
                       if (item.submenu) {
+                        cancelClose();
                         setDesktopDropdown(index);
+                      } else {
+                        scheduleClose();
                       }
                     }}
-                    onMouseLeave={() => setDesktopDropdown(null)}
+                    onMouseLeave={() => {
+                      if (item.submenu) {
+                        scheduleClose();
+                      }
+                    }}
                   >
                     {item.link ? (
                       <Link
                         href={item.link}
+                        onClick={() => setDesktopDropdown(null)}
                         className={`relative flex items-center justify-center whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold transition-all duration-300 2xl:px-4 2xl:text-[16px] ${
                           item.name === "Home"
                             ? "bg-[#302477] text-white shadow-md after:absolute after:-bottom-2 after:left-1/2 after:h-[3px] after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-[#eab341]"
@@ -226,19 +316,19 @@ export default function Header({ isHome = false }: HeaderProps) {
                     ) : (
                       <button
                         type="button"
-                        onClick={() =>
-                          setDesktopDropdown(
-                            desktopDropdown === index ? null : index
-                          )
-                        }
+                        onClick={() => toggleDesktopDropdown(index)}
                         aria-expanded={desktopDropdown === index}
+                        aria-haspopup="true"
                         className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold text-[#202044] transition-all duration-300 hover:bg-[#f8f2e6] hover:text-[#b98220] 2xl:px-4 2xl:text-[16px]"
                       >
                         {item.name}
+
                         <ChevronDown
                           size={15}
                           className={`transition-transform duration-300 ${
-                            desktopDropdown === index ? "rotate-180" : ""
+                            desktopDropdown === index
+                              ? "rotate-180"
+                              : ""
                           }`}
                         />
                       </button>
@@ -246,11 +336,16 @@ export default function Header({ isHome = false }: HeaderProps) {
 
                     {/* DESKTOP DROPDOWN */}
                     {item.submenu && desktopDropdown === index && (
-                      <ul className="absolute left-0 top-full z-[120] mt-3 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl">
+                      <ul
+                        onMouseEnter={cancelClose}
+                        onMouseLeave={scheduleClose}
+                        className="absolute left-0 top-full z-[150] mt-1 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
+                      >
                         {item.submenu.map((sub) => (
                           <li key={sub.name}>
                             <Link
                               href={sub.link}
+                              onClick={() => setDesktopDropdown(null)}
                               className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-700 transition-all duration-200 hover:translate-x-1 hover:bg-[#f8f3e9] hover:text-[#a87919]"
                             >
                               {sub.name}
@@ -261,26 +356,31 @@ export default function Header({ isHome = false }: HeaderProps) {
                     )}
                   </li>
                 ))}
+
               </ul>
             </nav>
 
-            {/* MOBILE / TABLET HAMBURGER */}
+            {/* MOBILE HAMBURGER */}
             <button
               type="button"
               className="ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f8f8fa] text-[#252047] shadow-sm transition-all duration-300 hover:bg-[#302477] hover:text-white xl:hidden"
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => {
+                setMobileOpen((prev) => !prev);
+                setMobileDropdown(null);
+              }}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X size={25} /> : <Menu size={25} />}
             </button>
+
           </div>
         </div>
       </div>
 
-      {/* MOBILE / TABLET EXPANDED MENU */}
+      {/* MOBILE NAVIGATION */}
       {mobileOpen && (
-        <nav className="relative z-[130] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl xl:hidden md:mx-6">
+        <nav className="relative z-[150] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl xl:hidden md:mx-6">
           <ul className="px-3 py-3">
 
             {menu.map((item, index) => (
@@ -293,25 +393,17 @@ export default function Header({ isHome = false }: HeaderProps) {
                   {item.link ? (
                     <Link
                       href={item.link}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex-1 py-4 text-sm font-semibold ${
-                        item.name === "Home"
-                          ? "text-[#b98220]"
-                          : "text-[#252047]"
-                      }`}
+                      onClick={closeMobileMenu}
+                      className="flex-1 py-4 text-sm font-semibold text-[#252047]"
                     >
                       {item.name}
                     </Link>
                   ) : (
                     <button
                       type="button"
-                      className="flex-1 py-4 text-left text-sm font-semibold text-[#252047]"
+                      onClick={() => toggleMobileDropdown(index)}
                       aria-expanded={mobileDropdown === index}
-                      onClick={() =>
-                        setMobileDropdown(
-                          mobileDropdown === index ? null : index
-                        )
-                      }
+                      className="flex-1 py-4 text-left text-sm font-semibold text-[#252047]"
                     >
                       {item.name}
                     </button>
@@ -323,20 +415,19 @@ export default function Header({ isHome = false }: HeaderProps) {
                       className="rounded-full p-3 text-[#252047] transition hover:bg-[#f8f3e9]"
                       aria-label={`Toggle ${item.name} submenu`}
                       aria-expanded={mobileDropdown === index}
-                      onClick={() =>
-                        setMobileDropdown(
-                          mobileDropdown === index ? null : index
-                        )
-                      }
+                      onClick={() => toggleMobileDropdown(index)}
                     >
                       <ChevronDown
                         size={19}
                         className={`transition-transform duration-300 ${
-                          mobileDropdown === index ? "rotate-180" : ""
+                          mobileDropdown === index
+                            ? "rotate-180"
+                            : ""
                         }`}
                       />
                     </button>
                   )}
+
                 </div>
 
                 {/* MOBILE DROPDOWN */}
@@ -346,10 +437,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       <li key={sub.name}>
                         <Link
                           href={sub.link}
-                          onClick={() => {
-                            setMobileOpen(false);
-                            setMobileDropdown(null);
-                          }}
+                          onClick={closeMobileMenu}
                           className="block border-b border-gray-200 px-4 py-3 text-sm text-gray-700 transition hover:text-[#b98220] last:border-0"
                         >
                           {sub.name}
@@ -358,8 +446,10 @@ export default function Header({ isHome = false }: HeaderProps) {
                     ))}
                   </ul>
                 )}
+
               </li>
             ))}
+
           </ul>
         </nav>
       )}
