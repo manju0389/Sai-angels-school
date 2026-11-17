@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -18,11 +17,14 @@ import ToughtDay from "@/components/ToughtDay";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+
+      {/* Header and Banner */}
+      <div className="relative w-full">
+        <HomeBanner />
+        <Header isHome={true} />
+      </div>
 
       <main className="flex-1">
-        {/* Hero Banner */}
-        <Header isHome={true} />
 
         {/* About the Institution */}
         <AboutSection />
@@ -38,12 +40,10 @@ export default function Home() {
 
         {/* Admissions + Thought of the Day */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* Thought of the Day */}
           <div>
             <ToughtDay />
           </div>
 
-          {/* Admissions */}
           <div>
             <HomeAdmission />
           </div>
@@ -58,15 +58,12 @@ export default function Home() {
         {/* Videos */}
         <HomeVideo />
 
-
-        {/* News and Updates + Testimonials */}
+        {/* News and Testimonials */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* News and Update */}
           <div>
             <RecentNews />
           </div>
 
-          {/* Testimonials */}
           <div>
             <SchoolTestinomial />
           </div>
