@@ -83,7 +83,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="relative z-[100] w-full shadow-md bg-white">
+    <header className="absolute top-0 left-0 z-[100] w-full shadow-md bg-white">
       <div className="bg-[#003375] px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
