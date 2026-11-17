@@ -83,7 +83,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="w-full shadow-md">
+    <header className="relative z-[100] w-full shadow-md bg-white">
       <div className="bg-[#003375] px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
@@ -173,7 +173,7 @@ export default function Header() {
                   )}
 
                   {item.submenu && desktopDropdown === index && (
-                    <ul className="absolute left-0 top-full z-50 max-h-[80vh] w-[18rem] overflow-y-auto bg-gray-800 shadow-lg">
+                   <ul className="absolute left-0 top-full z-[110] max-h-[80vh] w-[18rem] overflow-y-auto bg-gray-800 shadow-xl">
                       {item.submenu.map((sub) => (
                         <li key={sub.name} className="border-b border-gray-600">
                           <Link href={sub.link} className="block w-full px-4 py-2 text-sm hover:bg-gray-700" >
@@ -198,7 +198,7 @@ export default function Header() {
       </div>
 
       {mobileOpen && (
-        <nav className="bg-blue-900 text-white md:hidden">
+        <nav className="relative z-[110] bg-blue-900 text-white md:hidden">
           <ul className="flex flex-col">
             {menu.map((item, index) => (
               <li key={item.name} className="border-b border-blue-700">
