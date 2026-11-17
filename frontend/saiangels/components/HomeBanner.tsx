@@ -66,7 +66,7 @@ export default function HomeBanner() {
   if (loading || slides.length === 0) return null;
 
   return (
-    <section className="relative isolate w-full h-[450px] overflow-hidden bg-slate-950 sm:h-[550px] lg:h-[500px] xl:h-[500px]">
+    <section className="relative z-0 isolate w-full h-[450px] overflow-hidden bg-slate-950 sm:h-[550px] lg:h-[500px] xl:h-[500px]">
 
       {/* BANNER IMAGES */}
       {slides.map((slide, index) => (
