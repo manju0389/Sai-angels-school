@@ -13,7 +13,11 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 
-export default function Header() {
+interface HeaderProps {
+  isHome?: boolean;
+}
+
+export default function Header({ isHome = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [desktopDropdown, setDesktopDropdown] = useState<number | null>(null);
   const [mobileDropdown, setMobileDropdown] = useState<number | null>(null);
@@ -83,7 +87,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="absolute top-0 left-0 z-[100] w-full shadow-md bg-white">
+   <header className={`w-full z-[100] shadow-md ${ isHome ? "absolute top-0 left-0" : "relative" }`}>
       <div className="bg-[#003375] px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
