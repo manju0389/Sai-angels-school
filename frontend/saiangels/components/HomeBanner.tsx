@@ -67,7 +67,8 @@ export default function HomeBanner() {
 
   return (
     <section className="relative z-0 isolate w-full h-[450px] overflow-hidden bg-slate-950 sm:h-[550px] lg:h-[500px] xl:h-[500px]">
-
+      {/* LIGHT BLACK OVERLAY */}
+        <div className="absolute inset-0 z-[15] bg-black/30 pointer-events-none" />
       {/* BANNER IMAGES */}
       {slides.map((slide, index) => (
         <div
@@ -123,6 +124,7 @@ export default function HomeBanner() {
             ))}
           </div>
         </div>
+      </div>
       )}
     </section>
   );
