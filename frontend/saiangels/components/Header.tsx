@@ -167,7 +167,7 @@ export default function Header({ isHome = false }: HeaderProps) {
   return (
     <header
   ref={headerRef}
-  className={`relative z-[999999] isolate w-full ${
+  className={`absolute z-[999999] isolate w-full ${
     isHome
       ? "absolute left-0 top-0 bg-transparent"
       : "bg-white shadow-sm"
