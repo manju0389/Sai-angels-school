@@ -55,7 +55,7 @@ export default function Banner() {
         priority
         className="h-auto w-full object-cover"
       />
-    
+
       {banner.title && (
         <h1 className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded bg-black/50 px-5 py-2 text-3xl font-bold text-white">
           {banner.title}
