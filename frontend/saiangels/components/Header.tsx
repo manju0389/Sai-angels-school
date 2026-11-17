@@ -166,13 +166,13 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      ref={headerRef}
-      className={`relative z-[9999] w-full ${
-        isHome
-          ? "absolute left-0 top-0 bg-transparent"
-          : "bg-white shadow-sm"
-      }`}
-    >
+  ref={headerRef}
+  className={`relative z-[999999] isolate w-full ${
+    isHome
+      ? "absolute left-0 top-0 bg-transparent"
+      : "bg-white shadow-sm"
+  }`}
+>
       {/* TOP CONTACT BAR */}
       <div className="bg-black/55 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm md:text-base">
         <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -337,10 +337,10 @@ export default function Header({ isHome = false }: HeaderProps) {
                     {/* DESKTOP DROPDOWN */}
                     {item.submenu && desktopDropdown === index && (
                       <ul
-                        onMouseEnter={cancelClose}
-                        onMouseLeave={scheduleClose}
-                        className="absolute left-0 top-full z-[99999] mt-1 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
-                      >
+                          onMouseEnter={cancelClose}
+                          onMouseLeave={scheduleClose}
+                          className="absolute left-0 top-full z-[999999] mt-2 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
+                        >
                         {item.submenu.map((sub) => (
                           <li key={sub.name}>
                             <Link
