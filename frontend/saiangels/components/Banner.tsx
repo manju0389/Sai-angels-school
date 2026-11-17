@@ -46,7 +46,7 @@ export default function Banner() {
   }
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative z-0 w-full overflow-hidden">
       <Image
         src={banner.image}
         alt={banner.title || "School Banner"}
