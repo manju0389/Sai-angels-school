@@ -167,7 +167,7 @@ export default function Header({ isHome = false }: HeaderProps) {
   return (
     <header
       ref={headerRef}
-      className={`relative z-[100] w-full ${
+      className={`relative z-[9999] w-full ${
         isHome
           ? "absolute left-0 top-0 bg-transparent"
           : "bg-white shadow-sm"
@@ -252,7 +252,7 @@ export default function Header({ isHome = false }: HeaderProps) {
       </div>
 
       {/* MAIN NAVIGATION */}
-      <div className="px-3 pt-4 md:px-6 md:pt-6">
+      <div className="relative z-[9999] px-3 pt-4 md:px-6 md:pt-6">
         <div className="container relative mx-auto">
 
           <div className="relative flex min-h-[76px] items-center rounded-full border border-white/60 bg-white/90 py-2 pl-[88px] pr-3 shadow-[0_8px_35px_rgba(0,0,0,0.15)] backdrop-blur-lg md:min-h-[94px] md:pl-[145px] md:pr-5">
@@ -339,7 +339,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       <ul
                         onMouseEnter={cancelClose}
                         onMouseLeave={scheduleClose}
-                        className="absolute left-0 top-full z-[150] mt-1 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
+                        className="absolute left-0 top-full z-[99999] mt-1 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
                       >
                         {item.submenu.map((sub) => (
                           <li key={sub.name}>
