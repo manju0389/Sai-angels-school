@@ -88,7 +88,7 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
    <header className={`w-full z-[100] shadow-md ${ isHome ? "absolute top-0 left-0 bg-transparent" : "relative bg-white" }`} >
-      <div className="bg-[#003375] px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
+      <div className="bg-[#003375]/80 px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
             {/* Email */}
@@ -138,7 +138,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         </div>
       </div>
 
-      <div className="py-3 bg-[#ecdac6]">
+      <div className="py-3">
         <div className="container mx-auto flex items-center justify-between gap-4">
           <Link href="/" className="shrink-0">
             <Image src="/images/logo.png" alt="Sai Angels School Logo"
