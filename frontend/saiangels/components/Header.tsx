@@ -166,13 +166,13 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-  ref={headerRef}
-  className={`absolute z-[999999] isolate w-full ${
-    isHome
-      ? "absolute left-0 top-0 bg-transparent"
-      : "bg-white shadow-sm"
-  }`}
->
+      ref={headerRef}
+      className={`relative z-[999999] isolate w-full ${
+        isHome
+          ? "absolute left-0 top-0 bg-transparent"
+          : "relative bg-white shadow-sm"
+      }`}
+    >
       {/* TOP CONTACT BAR */}
       <div className="bg-black/55 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm md:text-base">
         <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
