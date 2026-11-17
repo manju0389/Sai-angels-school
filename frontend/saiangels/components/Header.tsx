@@ -319,7 +319,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                         onClick={() => toggleDesktopDropdown(index)}
                         aria-expanded={desktopDropdown === index}
                         aria-haspopup="true"
-                        className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold text-[#202044] transition-all duration-300 hover:bg-[#f8f2e6] hover:text-[#b98220] 2xl:px-4 2xl:text-[16px]"
+                        className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-3 text-[16px] font-bold text-[#202044] transition-all duration-300 hover:bg-[#f8f2e6] hover:text-[#b98220] 2xl:px-4 2xl:text-[16px]"
                       >
                         {item.name}
 
