@@ -60,10 +60,10 @@ export default function AdministrationPage() {
   return (
     <main className="min-h-screen bg-[#f9f7f7]">
       {/* Hero section */}
-      <section className="w-full bg-gradient-to-r from-[#16091b] via-[#773194] to-[#8537a5] px-4 py-20 sm:py-24 md:py-28">
-        <h1 className="text-center text-3xl font-bold text-white sm:text-4xl md:text-5xl">
-            Administration
-          </h1>
+      <section className="w-full bg-gradient-to-r from-[#F3E8FF] via-[#EDE1F7] to-[#FCE7F3] px-4 py-20 sm:py-24 md:py-28">
+        <h1 className="text-center text-3xl font-bold text-[#5B3475] sm:text-4xl md:text-5xl">
+          Administration
+        </h1>
       </section>
 
       {/* Main content section */}
