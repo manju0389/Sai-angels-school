@@ -37,7 +37,10 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "School Hymns", link: "/about-us/school-hymns" },
         { name: "Principal Speaks", link: "/about-us/principal-speaks" },
         { name: "Campus", link: "/about-us/campus" },
-        { name: "Sai Angels CBSE School", link: "/activities/sai-angels-cbse-school",},
+        {
+          name: "Sai Angels CBSE School",
+          link: "/activities/sai-angels-cbse-school",
+        },
       ],
     },
 
@@ -68,7 +71,10 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "Admission", link: "/admission/admission" },
         { name: "Transport", link: "/admission/transport" },
         { name: "Working Hours", link: "/admission/working-hours" },
-        { name: "Parental Co-Operation", link: "/admission/parental-co-operation", },
+        {
+          name: "Parental Co-Operation",
+          link: "/admission/parental-co-operation",
+        },
       ],
     },
 
@@ -83,136 +89,225 @@ export default function Header({ isHome = false }: HeaderProps) {
     },
 
     { name: "Contact Us", link: "/contact-us" },
-
   ];
 
   return (
-   <header className={`w-full z-[100] shadow-md ${ isHome ? "absolute top-0 left-0 bg-transparent" : "relative bg-white" }`} >
-      <div className="bg-black/50 px-4 py-3 font-bold text-sm text-[#e1a22f] md:text-base">
-          <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
+    <header
+      className={`relative z-[100] w-full ${
+        isHome
+          ? "absolute left-0 top-0 bg-transparent"
+          : "bg-white shadow-sm"
+      }`}
+    >
+      {/* TOP CONTACT BAR */}
+      <div className="bg-black/55 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm md:text-base">
+        <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
 
-            {/* Email */}
-            <span className="hover:text-[#ffc857] transition-colors duration-300">
-              Email:{" "}
-              <a href="mailto:saiangelsoffice@gmail.com">
-                saiangelsoffice@gmail.com
-              </a>
-            </span>
+          {/* EMAIL */}
+          <a
+            href="mailto:saiangelsoffice@gmail.com"
+            className="transition-colors hover:text-[#eab341]"
+          >
+            <span className="mr-1">✉</span>
+            Email: saiangelsoffice@gmail.com
+          </a>
 
-            {/* Phone Numbers */}
-            <span className="hover:text-[#ffc857] transition-colors duration-300">
-              Mobile:{" "}
-              <a href="tel:9632315633"> 9632315633 </a>{" "}
-              /{" "}
-              <a href="tel:8277522020"> 8277522020 </a>{" "}
-              /{" "}
-              <a href="tel:9448204444"> 9448204444 </a>
-            </span>
+          {/* PHONE NUMBERS */}
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="mr-1 text-[#eab341]">☎</span>
+            Mobile:
+            <a href="tel:9632315633" className="hover:text-[#eab341]">
+              9632315633
+            </a>
+            /
+            <a href="tel:8277522020" className="hover:text-[#eab341]">
+              8277522020
+            </a>
+            /
+            <a href="tel:9448204444" className="hover:text-[#eab341]">
+              9448204444
+            </a>
+          </div>
 
-            {/* Social Media Icons */}
-            <div className="flex items-center gap-4">
-              <a href="https://www.facebook.com/" target="_blank"
-                rel="noopener noreferrer" aria-label="Facebook" className="hover:text-blue-400 transition-colors"
-              >
-                <FaFacebookF size={18} />
-              </a>
+          {/* SOCIAL MEDIA */}
+          <div className="flex items-center gap-5">
+            <a
+              href="https://www.facebook.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="transition hover:text-[#eab341]"
+            >
+              <FaFacebookF size={19} />
+            </a>
 
-              <a href="https://www.instagram.com/" target="_blank"
-                rel="noopener noreferrer" aria-label="Instagram" className="hover:text-pink-400 transition-colors"
-              >
-                <FaInstagram size={19} />
-              </a>
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="transition hover:text-[#eab341]"
+            >
+              <FaInstagram size={21} />
+            </a>
 
-              <a href="https://www.youtube.com/" target="_blank"
-                rel="noopener noreferrer" aria-label="YouTube" className="hover:text-red-400 transition-colors"
-              >
-                <FaYoutube size={21} />
-              </a>
+            <a
+              href="https://www.youtube.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="transition hover:text-[#eab341]"
+            >
+              <FaYoutube size={23} />
+            </a>
 
-              <a href="https://wa.me/919632315633" target="_blank"
-                rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-green-400 transition-colors"
-              >
-                <FaWhatsapp size={20} />
-              </a>
+            <a
+              href="https://wa.me/919632315633"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              className="transition hover:text-[#eab341]"
+            >
+              <FaWhatsapp size={22} />
+            </a>
           </div>
         </div>
       </div>
 
-      <div className="py-3">
-        <div className="container mx-auto flex items-center justify-between gap-4">
-          <Link href="/" className="shrink-0">
-            <Image src="/images/logo.png" alt="Sai Angels School Logo"
-              width={110} height={80} priority className="h-auto w-[85px] object-contain md:w-[100px] lg:w-[110px]"
-            />
-          </Link>
+      {/* FLOATING NAVIGATION */}
+      <div className="px-3 pt-4 md:px-6 md:pt-6">
+        <div className="container relative mx-auto">
 
-          <nav className="hidden flex-1 justify-end rounded-md tracking-wider bg-[#2E1F66] text-white md:flex">
-            <ul className="flex w-full items-center font-bold justify-between">
-              {menu.map((item, index) => (
-                <li key={item.name} className="relative hover:bg-[#374151]"
-                  onMouseEnter={() => {
-                    if (item.submenu) setDesktopDropdown(index);
-                  }}
-                  onMouseLeave={() => setDesktopDropdown(null)}
-                >
-                  {item.link ? (
-                    <Link href={item.link}
-                      className="flex items-center gap-1 whitespace-nowrap px-2 py-4 text-[101%] lg:px-3 lg:text-[101%]"
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <button type="button"
-                      className="flex items-center gap-1 cursor-pointer whitespace-nowrap px-2 py-4 text-[101%] lg:px-3 lg:text-[101%]"
-                      aria-expanded={desktopDropdown === index}
-                      onClick={() =>
-                         setDesktopDropdown(
-                          desktopDropdown === index ? null : index
-                        )
+          <div className="relative flex min-h-[76px] items-center rounded-full border border-white/60 bg-white/90 py-2 pl-[88px] pr-3 shadow-[0_8px_35px_rgba(0,0,0,0.15)] backdrop-blur-lg md:min-h-[94px] md:pl-[145px] md:pr-5">
+
+            {/* SCHOOL LOGO */}
+            <Link
+              href="/"
+              className="absolute -left-1 top-1/2 z-20 flex h-[88px] w-[88px] -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg md:h-[125px] md:w-[125px]"
+            >
+              <Image
+                src="/images/logo.png"
+                alt="Sai Angels School Logo"
+                width={120}
+                height={120}
+                priority
+                className="h-[82%] w-[82%] object-contain"
+              />
+            </Link>
+
+            {/* LOGO DIVIDER */}
+            <div className="absolute left-[105px] top-1/2 hidden h-12 w-px -translate-y-1/2 bg-gray-300 md:left-[132px] md:block" />
+
+            {/* DESKTOP MENU */}
+            <nav className="hidden min-w-0 flex-1 xl:block">
+              <ul className="flex items-center justify-between gap-1">
+
+                {menu.map((item, index) => (
+                  <li
+                    key={item.name}
+                    className="group relative"
+                    onMouseEnter={() => {
+                      if (item.submenu) {
+                        setDesktopDropdown(index);
                       }
-                    >
-                      {item.name}
-                      <ChevronDown size={14} />
-                    </button>
-                  )}
+                    }}
+                    onMouseLeave={() => setDesktopDropdown(null)}
+                  >
+                    {item.link ? (
+                      <Link
+                        href={item.link}
+                        className={`relative flex items-center justify-center whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold transition-all duration-300 2xl:px-4 2xl:text-[16px] ${
+                          item.name === "Home"
+                            ? "bg-[#302477] text-white shadow-md after:absolute after:-bottom-2 after:left-1/2 after:h-[3px] after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-[#eab341]"
+                            : "text-[#202044] hover:bg-[#f8f2e6] hover:text-[#b98220]"
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDesktopDropdown(
+                            desktopDropdown === index ? null : index
+                          )
+                        }
+                        aria-expanded={desktopDropdown === index}
+                        className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold text-[#202044] transition-all duration-300 hover:bg-[#f8f2e6] hover:text-[#b98220] 2xl:px-4 2xl:text-[16px]"
+                      >
+                        {item.name}
+                        <ChevronDown
+                          size={15}
+                          className={`transition-transform duration-300 ${
+                            desktopDropdown === index ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    )}
 
-                  {item.submenu && desktopDropdown === index && (
-                   <ul className="absolute left-0 top-full z-[110] max-h-[80vh] w-[18rem] overflow-y-auto bg-gray-800 shadow-xl">
-                      {item.submenu.map((sub) => (
-                        <li key={sub.name} className="border-b border-gray-600">
-                          <Link href={sub.link} className="block w-full px-4 py-2 text-sm hover:bg-gray-700" >
-                            {sub.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
+                    {/* DESKTOP DROPDOWN */}
+                    {item.submenu && desktopDropdown === index && (
+                      <ul className="absolute left-0 top-full z-[120] mt-3 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl">
+                        {item.submenu.map((sub) => (
+                          <li key={sub.name}>
+                            <Link
+                              href={sub.link}
+                              className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-700 transition-all duration-200 hover:translate-x-1 hover:bg-[#f8f3e9] hover:text-[#a87919]"
+                            >
+                              {sub.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-          <button
-            type="button" className="shrink-0 p-2 md:hidden" onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+            {/* HAMBURGER BUTTON */}
+            <button
+              type="button"
+              className="ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f8f8fa] text-[#252047] shadow-sm transition-all duration-300 hover:bg-[#302477] hover:text-white"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X size={25} /> : <Menu size={25} />}
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* MOBILE / EXPANDED MENU */}
       {mobileOpen && (
-        <nav className="relative z-[110] bg-blue-900 text-white md:hidden">
-          <ul className="flex flex-col">
+        <nav className="relative z-[130] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl md:mx-6 xl:mx-auto xl:max-w-[1450px]">
+          <ul className="px-3 py-3">
+
             {menu.map((item, index) => (
-              <li key={item.name} className="border-b border-blue-700">
-                <div className="flex items-center justify-between px-4 py-3">
+              <li
+                key={item.name}
+                className="border-b border-gray-100 last:border-0"
+              >
+                <div className="flex items-center justify-between">
+
                   {item.link ? (
-                    <Link href={item.link} className="flex-1" onClick={() => setMobileOpen(false)}>
+                    <Link
+                      href={item.link}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex-1 py-4 text-sm font-semibold ${
+                        item.name === "Home"
+                          ? "text-[#b98220]"
+                          : "text-[#252047]"
+                      }`}
+                    >
                       {item.name}
                     </Link>
                   ) : (
-                    <button type="button" className="flex-1 text-left" aria-expanded={mobileDropdown === index}
+                    <button
+                      type="button"
+                      className="flex-1 py-4 text-left text-sm font-semibold text-[#252047]"
+                      aria-expanded={mobileDropdown === index}
                       onClick={() =>
                         setMobileDropdown(
                           mobileDropdown === index ? null : index
@@ -224,7 +319,10 @@ export default function Header({ isHome = false }: HeaderProps) {
                   )}
 
                   {item.submenu && (
-                    <button type="button" className="px-3 py-1" aria-label={`Toggle ${item.name} submenu`}
+                    <button
+                      type="button"
+                      className="rounded-full p-3 text-[#252047] transition hover:bg-[#f8f3e9]"
+                      aria-label={`Toggle ${item.name} submenu`}
                       aria-expanded={mobileDropdown === index}
                       onClick={() =>
                         setMobileDropdown(
@@ -232,24 +330,28 @@ export default function Header({ isHome = false }: HeaderProps) {
                         )
                       }
                     >
-                      {mobileDropdown === index ? (
-                        <X size={18} />
-                      ) : (
-                        <ChevronDown size={18} />
-                      )}
+                      <ChevronDown
+                        size={19}
+                        className={`transition-transform duration-300 ${
+                          mobileDropdown === index ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
                   )}
                 </div>
 
+                {/* MOBILE DROPDOWN */}
                 {item.submenu && mobileDropdown === index && (
-                  <ul className="bg-blue-800">
+                  <ul className="mb-3 ml-3 rounded-xl bg-[#f8f6f1] p-2">
                     {item.submenu.map((sub) => (
-                      <li key={sub.name} className="border-b border-blue-700">
-                        <Link href={sub.link} className="block w-full px-6 py-3 text-sm hover:bg-blue-700"
+                      <li key={sub.name}>
+                        <Link
+                          href={sub.link}
                           onClick={() => {
                             setMobileOpen(false);
                             setMobileDropdown(null);
                           }}
+                          className="block border-b border-gray-200 px-4 py-3 text-sm text-gray-700 transition hover:text-[#b98220] last:border-0"
                         >
                           {sub.name}
                         </Link>
