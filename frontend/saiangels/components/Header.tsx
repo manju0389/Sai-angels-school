@@ -181,10 +181,6 @@ export default function Header({ isHome = false }: HeaderProps) {
           {/* MENU CONTENT */}
           <div className="mx-auto max-w-5xl px-6 pb-16 pt-5 md:px-12 md:pt-10">
 
-            <p className="mb-8 text-sm font-semibold uppercase tracking-[5px] text-[#20b96c]">
-              Explore Sai Angels
-            </p>
-
             <nav>
               <ul className="space-y-2">
 
@@ -199,7 +195,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                         <Link
                           href={item.link}
                           onClick={closeMenu}
-                          className="py-4 text-2xl font-normal text-[#202020] transition hover:translate-x-2 hover:text-[#16b96c] md:py-5 md:text-4xl"
+                          className="py-4 text-2xl font-normal text-[#202020] transition hover:translate-x-2 hover:text-[#16b96c] md:py-5 md:text-4xl cursor-pointer"
                         >
                           {item.name}
                         </Link>
@@ -247,13 +243,6 @@ export default function Header({ isHome = false }: HeaderProps) {
 
               </ul>
             </nav>
-
-            {/* FOOTER */}
-            <div className="mt-12 border-t border-black/10 pt-6">
-              <p className="mt-2 text-sm text-gray-500">
-                Welcome to Sai Angels School
-              </p>
-            </div>
 
           </div>
         </div>
