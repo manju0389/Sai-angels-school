@@ -108,7 +108,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         <Link
           href="/"
           onClick={closeMenu}
-          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:mt-7 md:h-[95px] md:w-[185px]"
+          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:mt-7 md:h-[95px] md:w-[185px] cursor-pointer"
         >
           <Image
             src="/images/logo.png"
@@ -137,14 +137,14 @@ export default function Header({ isHome = false }: HeaderProps) {
           max-sm:-right-[95px] max-sm:h-[210px] max-sm:w-[210px]
           max-sm:pb-[27px] max-sm:pl-[43px]`}
         >
-          <span className="flex flex-col items-center gap-1">
+          <span className="flex flex-col items-center gap-1 cursor-pointer">
             {menuOpen ? (
               <X size={32} strokeWidth={1.5} />
             ) : (
               <MenuIcon size={32} strokeWidth={1.5} />
             )}
 
-            <span className="text-[25px] font-normal tracking-tight max-sm:text-[20px]">
+            <span className="text-[25px] font-normal tracking-tight max-sm:text-[20px] cursor-pointer">
               {menuOpen ? "Close" : "Menu"}
             </span>
           </span>
@@ -172,7 +172,7 @@ export default function Header({ isHome = false }: HeaderProps) {
               type="button"
               onClick={closeMenu}
               aria-label="Close menu"
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#20df82] text-black transition hover:bg-[#15ce72]"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#20df82] text-black transition hover:bg-[#15ce72] cursor-pointer"
             >
               <X size={30} />
             </button>
