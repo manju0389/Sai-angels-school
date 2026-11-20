@@ -208,8 +208,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                             )
                           }
                           aria-expanded={activeDropdown === index}
-                          className="flex flex-1 items-center justify-between py-4 text-left text-2xl font-normal text-[#202020] transition hover:text-[#16b96c] md:py-5 md:text-4xl"
-                        >
+                          className="flex flex-1 cursor-pointer items-center justify-between py-4 text-left text-2xl font-normal text-[#202020] transition hover:text-[#16b96c] md:py-5 md:text-4xl">
                           {item.name}
 
                           <ChevronDown
