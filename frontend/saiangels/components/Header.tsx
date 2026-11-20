@@ -249,9 +249,6 @@ export default function Header({ isHome = false }: HeaderProps) {
 
             {/* FOOTER */}
             <div className="mt-12 border-t border-black/10 pt-6">
-              <p className="text-sm text-gray-600">
-                Mallya Aditi International School
-              </p>
               <p className="mt-2 text-sm text-gray-500">
                 Welcome to Sai Angels School
               </p>
