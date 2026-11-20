@@ -1,17 +1,10 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaYoutube,
-  FaWhatsapp,
-} from "react-icons/fa";
+import { Menu as MenuIcon, X, ChevronDown } from "lucide-react";
 
 interface HeaderProps {
   isHome?: boolean;
@@ -29,16 +22,11 @@ interface MenuItem {
 }
 
 export default function Header({ isHome = false }: HeaderProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [desktopDropdown, setDesktopDropdown] = useState<number | null>(null);
-  const [mobileDropdown, setMobileDropdown] = useState<number | null>(null);
-
-  const headerRef = useRef<HTMLElement>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
 
   const menu: MenuItem[] = [
     { name: "Home", link: "/" },
-
     {
       name: "About Us",
       submenu: [
@@ -57,7 +45,6 @@ export default function Header({ isHome = false }: HeaderProps) {
         },
       ],
     },
-
     {
       name: "CBSE School",
       submenu: [
@@ -78,7 +65,6 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "Geo tagged infrastructure", link: "/cbse-school/geo-tagged-infrastructure" },
       ],
     },
-
     {
       name: "Admission",
       submenu: [
@@ -91,9 +77,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         },
       ],
     },
-
     { name: "Achievements", link: "/achievements" },
-
     {
       name: "Gallery",
       submenu: [
@@ -101,252 +85,155 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "Video Gallery", link: "/gallery/video-gallery" },
       ],
     },
-
     { name: "Contact Us", link: "/contact-us" },
   ];
 
-  // Close dropdown when clicking outside the header
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        headerRef.current &&
-        !headerRef.current.contains(event.target as Node)
-      ) {
-        setDesktopDropdown(null);
-        setMobileOpen(false);
-        setMobileDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  // Clear pending desktop dropdown close
-  const cancelClose = () => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-  };
-
-  // Delayed close prevents dropdown flickering
-  const scheduleClose = () => {
-    cancelClose();
-
-    closeTimer.current = setTimeout(() => {
-      setDesktopDropdown(null);
-    }, 180);
-  };
-
-  // Toggle desktop dropdown
-  const toggleDesktopDropdown = (index: number) => {
-    cancelClose();
-
-    setDesktopDropdown((current) =>
-      current === index ? null : index
-    );
-  };
-
-  // Toggle mobile dropdown
-  const toggleMobileDropdown = (index: number) => {
-    setMobileDropdown((current) =>
-      current === index ? null : index
-    );
-  };
-
-  // Close all mobile navigation
-  const closeMobileMenu = () => {
-    setMobileOpen(false);
-    setMobileDropdown(null);
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setActiveDropdown(null);
   };
 
   return (
     <header
-      ref={headerRef}
-      className={`z-[999999] isolate w-full ${
-        isHome
-          ? "absolute left-0 top-0 bg-transparent"
-          : "relative bg-white shadow-sm"
+      className={`relative z-[99999] w-full ${
+        isHome ? "absolute left-0 top-0" : ""
       }`}
     >
-      {/* TOP CONTACT BAR */}
-      <div className="bg-black/55 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm md:text-base">
-        <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
+      {/* TOP HEADER */}
+      <div className="relative flex h-[110px] items-start justify-between px-5 md:h-[130px] md:px-8">
 
-          {/* EMAIL */}
-          <a
-            href="mailto:saiangelsoffice@gmail.com"
-            className="transition-colors hover:text-[#eab341]"
-          >
-            <span className="mr-1 text-[#eab341]">☎</span>
-            Email: saiangelsoffice@gmail.com
-          </a>
+        {/* SCHOOL LOGO */}
+        <Link
+          href="/"
+          onClick={closeMenu}
+          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:mt-7 md:h-[95px] md:w-[185px]"
+        >
+          <Image
+            src="/images/logo.png"
+            alt="Sai Angels School Logo"
+            width={200}
+            height={120}
+            priority
+            className="h-full w-full object-contain object-left"
+          />
+        </Link>
 
-          {/* PHONE */}
-          <div className="flex flex-wrap items-center gap-1">
-            <span className="mr-1 text-[#eab341]">☎</span>
-            Mobile:
+        {/* GREEN CIRCULAR MENU */}
+        <button
+          type="button"
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+            setActiveDropdown(null);
+          }}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          className="absolute -right-[105px] -top-[130px] z-[100001]
+          flex h-[260px] w-[260px] items-end justify-start
+          rounded-full bg-[#20df82] pb-[38px] pl-[53px]
+          text-black transition-colors duration-300
+          hover:bg-[#15ce72]
+          max-sm:-right-[95px] max-sm:-top-[105px]
+          max-sm:h-[210px] max-sm:w-[210px]
+          max-sm:pb-[27px] max-sm:pl-[43px]"
+        >
+          <span className="flex flex-col items-center gap-1">
+            {menuOpen ? (
+              <X size={32} strokeWidth={1.5} />
+            ) : (
+              <MenuIcon size={32} strokeWidth={1.5} />
+            )}
 
-            <a href="tel:9632315633" className="hover:text-[#eab341]">
-              9632315633
-            </a>
-            /
-
-            <a href="tel:8277522020" className="hover:text-[#eab341]">
-              8277522020
-            </a>
-            /
-
-            <a href="tel:9448204444" className="hover:text-[#eab341]">
-              9448204444
-            </a>
-          </div>
-
-          {/* SOCIAL MEDIA */}
-          <div className="flex items-center gap-5">
-            <a
-              href="https://www.facebook.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
-              className="transition hover:text-[#eab341]"
-            >
-              <FaFacebookF size={19} />
-            </a>
-
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="transition hover:text-[#eab341]"
-            >
-              <FaInstagram size={21} />
-            </a>
-
-            <a
-              href="https://www.youtube.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              className="transition hover:text-[#eab341]"
-            >
-              <FaYoutube size={23} />
-            </a>
-
-            <a
-              href="https://wa.me/919632315633"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="transition hover:text-[#eab341]"
-            >
-              <FaWhatsapp size={22} />
-            </a>
-          </div>
-        </div>
+            <span className="text-[25px] font-normal tracking-tight max-sm:text-[20px]">
+              {menuOpen ? "Close" : "Menu"}
+            </span>
+          </span>
+        </button>
       </div>
 
-      {/* MAIN NAVIGATION */}
-      <div className="relative z-[9999] px-3 pt-4 md:px-6 md:pt-6">
-        <div className="container relative mx-auto">
+      {/* FULL SCREEN MENU */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-[100000] overflow-y-auto bg-[#f2f1eb]">
 
-          <div className="relative flex min-h-[76px] items-center rounded-full border border-white/60 bg-white/90 py-2 pl-[88px] pr-3 shadow-[0_8px_35px_rgba(0,0,0,0.15)] backdrop-blur-lg md:min-h-[94px] md:pl-[145px] md:pr-5">
+          {/* MENU HEADER */}
+          <div className="relative flex min-h-[120px] items-center justify-between px-5 py-4 md:px-10">
 
-            {/* LOGO */}
-            <Link
-              href="/"
-              className="absolute -left-1 top-1/2 z-20 flex h-[88px] w-[88px] -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg md:h-[125px] md:w-[125px]"
-              onClick={() => {
-                setDesktopDropdown(null);
-                closeMobileMenu();
-              }}
-            >
+            <Link href="/" onClick={closeMenu}>
               <Image
                 src="/images/logo.png"
-                alt="Sai Angels School Logo"
-                width={120}
-                height={120}
-                priority
-                className="h-[82%] w-[82%] object-contain"
+                alt="Sai Angels School"
+                width={180}
+                height={100}
+                className="h-[75px] w-[150px] object-contain object-left"
               />
             </Link>
 
-            {/* LOGO DIVIDER */}
-            <div className="absolute left-[105px] top-1/2 hidden h-12 w-px -translate-y-1/2 bg-gray-300 md:left-[132px] md:block" />
+            <button
+              type="button"
+              onClick={closeMenu}
+              aria-label="Close menu"
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#20df82] text-black transition hover:bg-[#15ce72]"
+            >
+              <X size={30} />
+            </button>
+          </div>
 
-            {/* DESKTOP NAVIGATION */}
-            <nav className="hidden min-w-0 flex-1 xl:block">
-              <ul className="flex items-center justify-between gap-1">
+          {/* MENU CONTENT */}
+          <div className="mx-auto max-w-5xl px-6 pb-16 pt-5 md:px-12 md:pt-10">
+
+            <p className="mb-8 text-sm font-semibold uppercase tracking-[5px] text-[#20b96c]">
+              Explore Sai Angels
+            </p>
+
+            <nav>
+              <ul className="space-y-2">
 
                 {menu.map((item, index) => (
                   <li
                     key={item.name}
-                    className="relative"
-                    onMouseEnter={() => {
-                      if (item.submenu) {
-                        cancelClose();
-                        setDesktopDropdown(index);
-                      } else {
-                        scheduleClose();
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (item.submenu) {
-                        scheduleClose();
-                      }
-                    }}
+                    className="border-b border-black/10"
                   >
-                    {item.link ? (
-                      <Link
-                        href={item.link}
-                        onClick={() => setDesktopDropdown(null)}
-                        className={`relative flex items-center justify-center whitespace-nowrap rounded-full px-3 py-3 text-[14px] font-bold transition-all duration-300 2xl:px-4 2xl:text-[16px] ${
-                          item.name === "Home"
-                            ? "bg-[#302477] text-white shadow-md after:absolute after:-bottom-2 after:left-1/2 after:h-[3px] after:w-10 after:-translate-x-1/2 after:rounded-full after:bg-[#eab341]"
-                            : "text-[#202044] hover:bg-[#f8f2e6] hover:text-[#b98220]"
-                        }`}
-                      >
-                        {item.name}
-                      </Link>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => toggleDesktopDropdown(index)}
-                        aria-expanded={desktopDropdown === index}
-                        aria-haspopup="true"
-                        className="flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-3 text-[16px] font-bold text-[#202044] transition-all duration-300 hover:bg-[#f8f2e6] hover:text-[#b98220] 2xl:px-4 2xl:text-[16px]"
-                      >
-                        {item.name}
+                    <div className="flex items-center justify-between gap-4">
 
-                        <ChevronDown
-                          size={15}
-                          className={`transition-transform duration-300 ${
-                            desktopDropdown === index
-                              ? "rotate-180"
-                              : ""
-                          }`}
-                        />
-                      </button>
-                    )}
-
-                    {/* DESKTOP DROPDOWN */}
-                    {item.submenu && desktopDropdown === index && (
-                      <ul
-                          onMouseEnter={cancelClose}
-                          onMouseLeave={scheduleClose}
-                          className="absolute left-0 top-full z-[999999] mt-2 max-h-[75vh] w-[290px] overflow-y-auto rounded-xl border border-gray-100 bg-white p-2 shadow-2xl"
+                      {item.link ? (
+                        <Link
+                          href={item.link}
+                          onClick={closeMenu}
+                          className="py-4 text-2xl font-normal text-[#202020] transition hover:translate-x-2 hover:text-[#16b96c] md:py-5 md:text-4xl"
                         >
+                          {item.name}
+                        </Link>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveDropdown(
+                              activeDropdown === index ? null : index
+                            )
+                          }
+                          aria-expanded={activeDropdown === index}
+                          className="flex flex-1 items-center justify-between py-4 text-left text-2xl font-normal text-[#202020] transition hover:text-[#16b96c] md:py-5 md:text-4xl"
+                        >
+                          {item.name}
+
+                          <ChevronDown
+                            size={25}
+                            className={`transition-transform duration-300 ${
+                              activeDropdown === index ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* SUBMENU */}
+                    {item.submenu && activeDropdown === index && (
+                      <ul className="mb-5 grid grid-cols-1 gap-x-8 rounded-xl bg-white/70 p-4 sm:grid-cols-2 md:grid-cols-3 md:p-6">
                         {item.submenu.map((sub) => (
                           <li key={sub.name}>
                             <Link
                               href={sub.link}
-                              onClick={() => setDesktopDropdown(null)}
-                              className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-700 transition-all duration-200 hover:translate-x-1 hover:bg-[#f8f3e9] hover:text-[#a87919]"
+                              onClick={closeMenu}
+                              className="block border-b border-gray-100 py-3 text-sm text-gray-700 transition hover:translate-x-1 hover:text-[#16b96c] md:text-base"
                             >
                               {sub.name}
                             </Link>
@@ -360,98 +247,18 @@ export default function Header({ isHome = false }: HeaderProps) {
               </ul>
             </nav>
 
-            {/* MOBILE HAMBURGER */}
-            <button
-              type="button"
-              className="ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f8f8fa] text-[#252047] shadow-sm transition-all duration-300 hover:bg-[#302477] hover:text-white xl:hidden"
-              onClick={() => {
-                setMobileOpen((prev) => !prev);
-                setMobileDropdown(null);
-              }}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen}
-            >
-              {mobileOpen ? <X size={25} /> : <Menu size={25} />}
-            </button>
+            {/* FOOTER */}
+            <div className="mt-12 border-t border-black/10 pt-6">
+              <p className="text-sm text-gray-600">
+                Mallya Aditi International School
+              </p>
+              <p className="mt-2 text-sm text-gray-500">
+                Welcome to Sai Angels School
+              </p>
+            </div>
 
           </div>
         </div>
-      </div>
-
-      {/* MOBILE NAVIGATION */}
-      {mobileOpen && (
-        <nav className="relative z-[150] mx-3 mt-3 max-h-[75vh] overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl xl:hidden md:mx-6">
-          <ul className="px-3 py-3">
-
-            {menu.map((item, index) => (
-              <li
-                key={item.name}
-                className="border-b border-gray-100 last:border-0"
-              >
-                <div className="flex items-center justify-between">
-
-                  {item.link ? (
-                    <Link
-                      href={item.link}
-                      onClick={closeMobileMenu}
-                      className="flex-1 py-4 text-sm font-semibold text-[#252047]"
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => toggleMobileDropdown(index)}
-                      aria-expanded={mobileDropdown === index}
-                      className="flex-1 py-4 text-left text-sm font-semibold text-[#252047]"
-                    >
-                      {item.name}
-                    </button>
-                  )}
-
-                  {item.submenu && (
-                    <button
-                      type="button"
-                      className="rounded-full p-3 text-[#252047] transition hover:bg-[#f8f3e9]"
-                      aria-label={`Toggle ${item.name} submenu`}
-                      aria-expanded={mobileDropdown === index}
-                      onClick={() => toggleMobileDropdown(index)}
-                    >
-                      <ChevronDown
-                        size={19}
-                        className={`transition-transform duration-300 ${
-                          mobileDropdown === index
-                            ? "rotate-180"
-                            : ""
-                        }`}
-                      />
-                    </button>
-                  )}
-
-                </div>
-
-                {/* MOBILE DROPDOWN */}
-                {item.submenu && mobileDropdown === index && (
-                  <ul className="mb-3 ml-3 rounded-xl bg-[#f8f6f1] p-2">
-                    {item.submenu.map((sub) => (
-                      <li key={sub.name}>
-                        <Link
-                          href={sub.link}
-                          onClick={closeMobileMenu}
-                          className="block border-b border-gray-200 px-4 py-3 text-sm text-gray-700 transition hover:text-[#b98220] last:border-0"
-                        >
-                          {sub.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-              </li>
-            ))}
-
-          </ul>
-        </nav>
       )}
     </header>
   );
