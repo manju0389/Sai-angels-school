@@ -95,8 +95,10 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      className={`absolute top-0 left-0 z-[999999] w-full ${
-        isHome ? "bg-transparent" : "bg-white"
+      className={`z-[999999] w-full ${
+        isHome
+          ? "absolute left-0 top-0 bg-transparent"
+          : "relative bg-white"
       }`}
     >
       {/* TOP HEADER */}
@@ -127,14 +129,13 @@ export default function Header({ isHome = false }: HeaderProps) {
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
-          className="absolute -right-[105px] -top-[130px] z-[100001]
+          className={`absolute -right-[105px] z-[100001]
           flex h-[260px] w-[260px] items-end justify-start
           rounded-full bg-[#20df82] pb-[38px] pl-[53px]
-          text-black transition-colors duration-300
-          hover:bg-[#15ce72]
-          max-sm:-right-[95px] max-sm:-top-[105px]
-          max-sm:h-[210px] max-sm:w-[210px]
-          max-sm:pb-[27px] max-sm:pl-[43px]"
+          text-black transition-colors duration-300 hover:bg-[#15ce72]
+          ${isHome ? "-top-[130px]" : "-top-[130px]"}
+          max-sm:-right-[95px] max-sm:h-[210px] max-sm:w-[210px]
+          max-sm:pb-[27px] max-sm:pl-[43px]`}
         >
           <span className="flex flex-col items-center gap-1">
             {menuOpen ? (
