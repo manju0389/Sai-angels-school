@@ -182,7 +182,7 @@ export default function Header({ isHome = false }: HeaderProps) {
           <div className="mx-auto max-w-5xl px-6 pb-16 pt-5 md:px-12 md:pt-10">
 
             <nav>
-              <ul className="space-y-2">
+              <ul className="space-y-2 cursor-pointer">
 
                 {menu.map((item, index) => (
                   <li
