@@ -230,7 +230,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                             <Link
                               href={sub.link}
                               onClick={closeMenu}
-                              className="block border-b border-gray-100 py-3 text-sm text-gray-700 transition hover:translate-x-1 hover:text-[#16b96c] md:text-base"
+                              className="block border-b border-gray-100 py-3 text-lg text-gray-700 transition hover:translate-x-1 hover:text-[#16b96c] md:text-base"
                             >
                               {sub.name}
                             </Link>
