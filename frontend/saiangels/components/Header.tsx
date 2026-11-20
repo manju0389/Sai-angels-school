@@ -102,13 +102,13 @@ export default function Header({ isHome = false }: HeaderProps) {
       }`}
     >
       {/* TOP HEADER */}
-      <div className="relative flex h-[110px] items-start justify-between px-5 md:h-[130px] md:px-8">
+        <div className="relative flex h-[110px] items-start justify-between overflow-hidden px-5 md:h-[130px] md:px-8">
 
         {/* SCHOOL LOGO */}
         <Link
           href="/"
           onClick={closeMenu}
-          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:mt-7 md:h-[95px] md:w-[185px] cursor-pointer"
+          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:h-[95px] md:w-[185px] cursor-pointer"
         >
           <Image
             src="/images/logo.png"
@@ -129,13 +129,13 @@ export default function Header({ isHome = false }: HeaderProps) {
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
-          className={`absolute -right-[105px] z-[100001]
-          flex h-[260px] w-[260px] items-end justify-start
-          rounded-full bg-[#20df82] pb-[38px] pl-[53px]
+          className={`absolute -right-[65px] z-[100001]
+          flex h-[210px] w-[210px] items-end justify-start
+          rounded-full bg-[#20df82] pb-[30px] pl-[43px]
           text-black transition-colors duration-300 hover:bg-[#15ce72]
-          ${isHome ? "-top-[130px]" : "-top-[130px]"}
-          max-sm:-right-[95px] max-sm:h-[210px] max-sm:w-[210px]
-          max-sm:pb-[27px] max-sm:pl-[43px]`}
+          ${isHome ? "-top-[105px]" : "-top-[105px]"}
+          max-sm:-right-[55px] max-sm:h-[175px] max-sm:w-[175px]
+          max-sm:pb-[23px] max-sm:pl-[35px]`}
         >
           <span className="flex flex-col items-center gap-1 cursor-pointer">
             {menuOpen ? (
