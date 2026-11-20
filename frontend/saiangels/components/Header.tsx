@@ -95,8 +95,8 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      className={`relative z-[99999] w-full ${
-        isHome ? "absolute left-0 top-0" : ""
+      className={`absolute top-0 left-0 z-[999999] w-full ${
+        isHome ? "bg-transparent" : "bg-white"
       }`}
     >
       {/* TOP HEADER */}
