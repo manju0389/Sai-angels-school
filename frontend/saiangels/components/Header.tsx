@@ -155,7 +155,7 @@ export default function Header({ isHome = false }: HeaderProps) {
               ) : (
                 <button
                   type="button"
-                  className={`flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`flex items-center gap-1 whitespace-nowrap py-8 cursor-pointer text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                   <ChevronDown size={15} />
@@ -170,7 +170,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       <Link
                         key={sub.name}
                         href={sub.link}
-                        className="block rounded-md px-4 py-2.5 text-lg text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
+                        className="block rounded-md px-4 py-2 font-semibold text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
                       >
                         {sub.name}
                       </Link>
