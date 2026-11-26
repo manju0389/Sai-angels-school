@@ -126,14 +126,15 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      className={`z-[9999] w-full transition-all duration-300 ${
+      className={`sticky top-0 z-[9999] w-full transition-all duration-300 ${
         isHome
           ? `fixed left-0 top-0 ${
               scrolled ? "bg-white shadow-md" : "bg-transparent"
             }`
-          : "relative bg-white shadow-sm"
+          : "bg-white shadow-md"
       }`}
     >
+      
       {/* HEADER NAVIGATION */}
       <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
         {/* LOGO */}
