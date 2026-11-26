@@ -305,7 +305,7 @@ export default function PhotoGalleryPage() {
         <h1 className="text-center text-3xl font-bold leading-tight text-[#102c50] sm:text-5xl">
           School Gallery
         </h1>
-      </header>
+      </section>
 
       <div className="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:space-y-16 sm:px-6 sm:py-14 lg:px-8">
         {loading && (
