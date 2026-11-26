@@ -23,7 +23,7 @@ interface MenuItem {
 
 export default function Header({ isHome = false }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const menu: MenuItem[] = [
     { name: "Home", link: "/" },
@@ -39,10 +39,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "School Hymns", link: "/about-us/school-hymns" },
         { name: "Principal Speaks", link: "/about-us/principal-speaks" },
         { name: "Campus", link: "/about-us/campus" },
-        {
-          name: "Sai Angels CBSE School",
-          link: "/activities/sai-angels-cbse-school",
-        },
+        { name: "Sai Angels CBSE School", link: "/activities/sai-angels-cbse-school" },
       ],
     },
     {
@@ -71,10 +68,7 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "Admission", link: "/admission/admission" },
         { name: "Transport", link: "/admission/transport" },
         { name: "Working Hours", link: "/admission/working-hours" },
-        {
-          name: "Parental Co-Operation",
-          link: "/admission/parental-co-operation",
-        },
+        { name: "Parental Co-Operation", link: "/admission/parental-co-operation" },
       ],
     },
     { name: "Achievements", link: "/achievements" },
@@ -93,157 +87,143 @@ export default function Header({ isHome = false }: HeaderProps) {
     setActiveDropdown(null);
   };
 
-  return (
-    <header
-      className={`z-[999999] w-full ${
-        isHome
-          ? "absolute left-0 top-0 bg-transparent"
-          : "relative bg-white"
-      }`}
-    >
-      {/* TOP HEADER */}
-        <div className="relative flex h-[110px] items-start justify-between overflow-hidden px-5 md:h-[130px] md:px-8">
+  const headerStyle = isHome
+    ? "bg-transparent"
+    : "bg-white shadow-sm";
 
-        {/* SCHOOL LOGO */}
+  return (
+    <header className={`relative z-50 w-full ${headerStyle}`}>
+
+      {/* HEADER NAVIGATION */}
+      <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
+
+        {/* LOGO */}
         <Link
           href="/"
           onClick={closeMenu}
-          className="relative z-20 mt-5 flex h-[75px] w-[155px] items-center md:h-[95px] md:w-[185px] cursor-pointer"
+          className="relative z-20 flex h-[75px] w-[145px] shrink-0 items-center md:h-[85px] md:w-[170px]"
         >
           <Image
             src="/images/logo.png"
-            alt="Sai Angels School Logo"
+            alt="Sai Angels School"
             width={200}
             height={120}
             priority
-            className="h-full w-full object-contain object-left"
+            className="h-full w-full object-contain"
           />
         </Link>
 
-        {/* GREEN CIRCULAR MENU */}
+        {/* DESKTOP MENU */}
+        <nav className="hidden items-center gap-5 xl:flex 2xl:gap-7">
+          {menu.map((item) => (
+            <div key={item.name} className="group relative">
+
+              {item.link ? (
+                <Link
+                  href={item.link}
+                  className="whitespace-nowrap py-8 text-[15px] font-medium text-[#202020] transition hover:text-[#16b96c]"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className="flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-medium text-[#202020] transition hover:text-[#16b96c]"
+                >
+                  {item.name}
+                  <ChevronDown size={15} />
+                </button>
+              )}
+
+              {/* DESKTOP DROPDOWN */}
+              {item.submenu && (
+                <div className="invisible absolute left-0 top-full z-50 w-[280px] translate-y-2 rounded-lg bg-white p-3 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                  <div className="max-h-[65vh] overflow-y-auto">
+                    {item.submenu.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        href={sub.link}
+                        className="block rounded-md px-4 py-2.5 text-sm text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+
+        {/* MOBILE MENU BUTTON */}
         <button
           type="button"
-          onClick={() => {
-            setMenuOpen(!menuOpen);
-            setActiveDropdown(null);
-          }}
+          onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
-          className={`absolute -right-[65px] z-[100001]
-          flex h-[210px] w-[210px] items-end justify-start
-          rounded-full bg-[#20df82] pb-[30px] pl-[43px]
-          text-black transition-colors duration-300 hover:bg-[#15ce72]
-          ${isHome ? "-top-[105px]" : "-top-[105px]"}
-          max-sm:-right-[55px] max-sm:h-[175px] max-sm:w-[175px]
-          max-sm:pb-[23px] max-sm:pl-[35px]`}
+          className="flex h-11 w-11 items-center justify-center rounded-md bg-[#20df82] text-black transition hover:bg-[#15ce72] xl:hidden"
         >
-          <span className="flex flex-col items-center gap-1 cursor-pointer">
-            {menuOpen ? (
-              <X size={32} strokeWidth={1.5} />
-            ) : (
-              <MenuIcon size={32} strokeWidth={1.5} />
-            )}
-
-            <span className="text-[25px] font-normal tracking-tight max-sm:text-[20px] cursor-pointer">
-              {menuOpen ? "Close" : "Menu"}
-            </span>
-          </span>
+          {menuOpen ? <X size={25} /> : <MenuIcon size={25} />}
         </button>
       </div>
 
-      {/* FULL SCREEN MENU */}
+      {/* MOBILE NAVIGATION */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[100000] overflow-y-auto bg-[#f2f1eb]">
+        <div className="absolute left-0 top-full z-50 max-h-[80vh] w-full overflow-y-auto border-t border-gray-100 bg-white shadow-xl xl:hidden">
+          <nav className="mx-auto max-w-7xl px-5 py-4">
 
-          {/* MENU HEADER */}
-          <div className="relative flex min-h-[120px] items-center justify-between px-5 py-4 md:px-10">
+            {menu.map((item) => (
+              <div key={item.name} className="border-b border-gray-100">
 
-            <Link href="/" onClick={closeMenu}>
-              <Image
-                src="/images/logo.png"
-                alt="Sai Angels School"
-                width={180}
-                height={100}
-                className="h-[75px] w-[150px] object-contain object-left"
-              />
-            </Link>
-
-            <button
-              type="button"
-              onClick={closeMenu}
-              aria-label="Close menu"
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-[#20df82] text-black transition hover:bg-[#15ce72] cursor-pointer"
-            >
-              <X size={30} />
-            </button>
-          </div>
-
-          {/* MENU CONTENT */}
-          <div className="mx-auto max-w-5xl px-6 pb-16 pt-5 md:px-12 md:pt-10">
-
-            <nav>
-              <ul className="space-y-2 cursor-pointer">
-
-                {menu.map((item, index) => (
-                  <li
-                    key={item.name}
-                    className="border-b border-black/10"
+                {item.link ? (
+                  <Link
+                    href={item.link}
+                    onClick={closeMenu}
+                    className="block py-3.5 text-base font-medium text-gray-800 hover:text-[#16b96c]"
                   >
-                    <div className="flex items-center justify-between gap-4">
+                    {item.name}
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveDropdown(
+                          activeDropdown === item.name ? null : item.name
+                        )
+                      }
+                      aria-expanded={activeDropdown === item.name}
+                      className="flex w-full items-center justify-between py-3.5 text-left text-base font-medium text-gray-800 hover:text-[#16b96c]"
+                    >
+                      {item.name}
+                      <ChevronDown
+                        size={18}
+                        className={`transition-transform ${
+                          activeDropdown === item.name ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
 
-                      {item.link ? (
-                        <Link
-                          href={item.link}
-                          onClick={closeMenu}
-                          className="py-4 text-2xl font-normal text-[#202020] transition hover:translate-x-2 hover:text-[#16b96c] md:py-5 md:text-4xl cursor-pointer"
-                        >
-                          {item.name}
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActiveDropdown(
-                              activeDropdown === index ? null : index
-                            )
-                          }
-                          aria-expanded={activeDropdown === index}
-                          className="flex flex-1 cursor-pointer items-center justify-between py-4 text-left text-2xl font-normal text-[#202020] transition hover:text-[#16b96c] md:py-5 md:text-4xl">
-                          {item.name}
-
-                          <ChevronDown
-                            size={25}
-                            className={`transition-transform duration-300 ${
-                              activeDropdown === index ? "rotate-180" : ""
-                            }`}
-                          />
-                        </button>
-                      )}
-                    </div>
-
-                    {/* SUBMENU */}
-                    {item.submenu && activeDropdown === index && (
-                      <ul className="mb-5 grid grid-cols-1 gap-x-8 rounded-xl bg-white/70 p-4 sm:grid-cols-2 md:grid-cols-3 md:p-6">
-                        {item.submenu.map((sub) => (
-                          <li key={sub.name}>
-                            <Link
-                              href={sub.link}
-                              onClick={closeMenu}
-                              className="block border-b border-gray-100 py-3 text-lg text-gray-700 transition hover:translate-x-1 hover:text-[#16b96c] md:text-base"
-                            >
-                              {sub.name}
-                            </Link>
-                          </li>
+                    {activeDropdown === item.name && (
+                      <div className="mb-3 rounded-lg bg-gray-50 px-4 py-2">
+                        {item.submenu?.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.link}
+                            onClick={closeMenu}
+                            className="block border-b border-gray-100 py-3 text-sm text-gray-600 last:border-0 hover:text-[#16b96c]"
+                          >
+                            {sub.name}
+                          </Link>
                         ))}
-                      </ul>
+                      </div>
                     )}
-                  </li>
-                ))}
+                  </>
+                )}
+              </div>
+            ))}
 
-              </ul>
-            </nav>
-
-          </div>
+          </nav>
         </div>
       )}
     </header>
