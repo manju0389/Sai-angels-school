@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu as MenuIcon, X, ChevronDown } from "lucide-react";
@@ -24,6 +24,21 @@ interface MenuItem {
 export default function Header({ isHome = false }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const menu: MenuItem[] = [
     { name: "Home", link: "/" },
@@ -39,7 +54,10 @@ export default function Header({ isHome = false }: HeaderProps) {
         { name: "School Hymns", link: "/about-us/school-hymns" },
         { name: "Principal Speaks", link: "/about-us/principal-speaks" },
         { name: "Campus", link: "/about-us/campus" },
-        { name: "Sai Angels CBSE School", link: "/activities/sai-angels-cbse-school" },
+        {
+          name: "Sai Angels CBSE School",
+          link: "/activities/sai-angels-cbse-school",
+        },
       ],
     },
     {
@@ -87,13 +105,19 @@ export default function Header({ isHome = false }: HeaderProps) {
     setActiveDropdown(null);
   };
 
-  const headerStyle = isHome
-    ? "bg-transparent"
-    : "bg-white shadow-sm";
+  const navTextColor =
+    scrolled || !isHome ? "text-[#202020]" : "text-white";
 
   return (
-    <header className={`relative z-50 w-full ${headerStyle}`}>
-
+    <header
+      className={`fixed left-0 top-0 z-[9999] w-full transition-all duration-300 ${
+        scrolled
+          ? "bg-white shadow-md"
+          : isHome
+            ? "bg-transparent"
+            : "bg-white shadow-sm"
+      }`}
+    >
       {/* HEADER NAVIGATION */}
       <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
 
@@ -121,14 +145,14 @@ export default function Header({ isHome = false }: HeaderProps) {
               {item.link ? (
                 <Link
                   href={item.link}
-                  className="whitespace-nowrap py-8 text-[15px] font-medium text-[#202020] transition hover:text-[#16b96c]"
+                  className={`whitespace-nowrap py-8 text-[15px] font-medium transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                 </Link>
               ) : (
                 <button
                   type="button"
-                  className="flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-medium text-[#202020] transition hover:text-[#16b96c]"
+                  className={`flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-medium transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                   <ChevronDown size={15} />
@@ -158,7 +182,10 @@ export default function Header({ isHome = false }: HeaderProps) {
         {/* MOBILE MENU BUTTON */}
         <button
           type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+            setActiveDropdown(null);
+          }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           className="flex h-11 w-11 items-center justify-center rounded-md bg-[#20df82] text-black transition hover:bg-[#15ce72] xl:hidden"
@@ -171,7 +198,6 @@ export default function Header({ isHome = false }: HeaderProps) {
       {menuOpen && (
         <div className="absolute left-0 top-full z-50 max-h-[80vh] w-full overflow-y-auto border-t border-gray-100 bg-white shadow-xl xl:hidden">
           <nav className="mx-auto max-w-7xl px-5 py-4">
-
             {menu.map((item) => (
               <div key={item.name} className="border-b border-gray-100">
 
@@ -196,6 +222,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       className="flex w-full items-center justify-between py-3.5 text-left text-base font-medium text-gray-800 hover:text-[#16b96c]"
                     >
                       {item.name}
+
                       <ChevronDown
                         size={18}
                         className={`transition-transform ${
@@ -222,7 +249,6 @@ export default function Header({ isHome = false }: HeaderProps) {
                 )}
               </div>
             ))}
-
           </nav>
         </div>
       )}
