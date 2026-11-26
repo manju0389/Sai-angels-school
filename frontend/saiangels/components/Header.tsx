@@ -26,13 +26,13 @@ export default function Header({ isHome = false }: HeaderProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
+  // Track page scroll
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
 
     handleScroll();
-
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
@@ -40,6 +40,20 @@ export default function Header({ isHome = false }: HeaderProps) {
     };
   }, []);
 
+  // Prevent background scrolling when mobile menu is open
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  // Navigation menu items
   const menu: MenuItem[] = [
     { name: "Home", link: "/" },
     {
@@ -100,11 +114,13 @@ export default function Header({ isHome = false }: HeaderProps) {
     { name: "Contact Us", link: "/contact-us" },
   ];
 
+  // Close mobile menu
   const closeMenu = () => {
     setMenuOpen(false);
     setActiveDropdown(null);
   };
 
+  // Header navigation text color
   const navTextColor =
     scrolled || !isHome ? "text-[#202020]" : "text-white";
 
@@ -113,17 +129,13 @@ export default function Header({ isHome = false }: HeaderProps) {
       className={`z-[9999] w-full transition-all duration-300 ${
         isHome
           ? `fixed left-0 top-0 ${
-              scrolled
-                ? "bg-white shadow-md"
-                : "bg-transparent"
+              scrolled ? "bg-white shadow-md" : "bg-transparent"
             }`
           : "relative bg-white shadow-sm"
       }`}
     >
-      
       {/* HEADER NAVIGATION */}
       <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
-
         {/* LOGO */}
         <Link
           href="/"
@@ -140,22 +152,21 @@ export default function Header({ isHome = false }: HeaderProps) {
           />
         </Link>
 
-        {/* DESKTOP MENU */}
+        {/* DESKTOP NAVIGATION */}
         <nav className="hidden items-center gap-5 xl:flex 2xl:gap-7">
           {menu.map((item) => (
             <div key={item.name} className="group relative">
-
               {item.link ? (
                 <Link
                   href={item.link}
-                  className={`whitespace-nowrap py-8 text-[15px] cursor-pointer font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`cursor-pointer whitespace-nowrap py-8 text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                 </Link>
               ) : (
                 <button
                   type="button"
-                  className={`flex items-center gap-1 whitespace-nowrap py-8 cursor-pointer text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`flex cursor-pointer items-center gap-1 whitespace-nowrap py-8 text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                   <ChevronDown size={15} />
@@ -191,6 +202,7 @@ export default function Header({ isHome = false }: HeaderProps) {
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
           className="flex h-11 w-11 items-center justify-center rounded-md bg-[#20df82] text-black transition hover:bg-[#15ce72] xl:hidden"
         >
           {menuOpen ? <X size={25} /> : <MenuIcon size={25} />}
@@ -199,16 +211,18 @@ export default function Header({ isHome = false }: HeaderProps) {
 
       {/* MOBILE NAVIGATION */}
       {menuOpen && (
-        <div className="absolute left-0 top-full z-50 max-h-[80vh] w-full overflow-y-auto border-t border-gray-100 bg-white shadow-xl xl:hidden">
-          <nav className="mx-auto max-w-7xl px-5 py-4">
+        <div
+          id="mobile-navigation"
+          className="absolute left-0 top-full z-50 w-full border-t border-gray-100 bg-white shadow-xl xl:hidden"
+        >
+          <nav className="mx-auto max-h-[calc(100dvh-90px)] max-w-7xl overflow-x-hidden overflow-y-auto overscroll-y-contain px-5 py-4">
             {menu.map((item) => (
               <div key={item.name} className="border-b border-gray-100">
-
                 {item.link ? (
                   <Link
                     href={item.link}
                     onClick={closeMenu}
-                    className="block py-3.5 text-base font-semibold text-gray-800 hover:text-[#16b96c]"
+                    className="block py-3.5 text-base font-medium text-gray-800 transition hover:text-[#16b96c]"
                   >
                     {item.name}
                   </Link>
@@ -222,10 +236,9 @@ export default function Header({ isHome = false }: HeaderProps) {
                         )
                       }
                       aria-expanded={activeDropdown === item.name}
-                      className="flex w-full items-center justify-between py-3.5 text-left text-base font-semibold text-gray-800 hover:text-[#16b96c]"
+                      className="flex w-full items-center justify-between py-3.5 text-left text-base font-medium text-gray-800 transition hover:text-[#16b96c]"
                     >
                       {item.name}
-
                       <ChevronDown
                         size={18}
                         className={`transition-transform ${
@@ -241,7 +254,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                             key={sub.name}
                             href={sub.link}
                             onClick={closeMenu}
-                            className="block border-b border-gray-100 py-3 text-lg text-gray-600 last:border-0 hover:text-[#16b96c]"
+                            className="block border-b border-gray-100 py-3 text-sm text-gray-600 transition last:border-0 hover:text-[#16b96c]"
                           >
                             {sub.name}
                           </Link>
