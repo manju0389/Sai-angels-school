@@ -41,13 +41,10 @@ export default function ParentalPage() {
   return (
     <main className="min-h-screen bg-[#f9f7f7]">
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-r from-[#16091b] via-[#773194] to-[#8537a5] px-4 py-20 sm:py-24 md:py-28">
-        <div className="mx-auto max-w-5xl text-center">
-
-          <h1 className="text-center text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+      <section className="w-full bg-gradient-to-r from-[#f8f1ff] via-[#ece6f1] to-[#fdf2f8] px-4 py-15">
+        <h1 className="text-center text-3xl font-bold leading-tight text-[#102c50] sm:text-5xl">
             Parental Co-Operation
           </h1>
-        </div>
       </section>
 
       {/* Guidelines Section */}
