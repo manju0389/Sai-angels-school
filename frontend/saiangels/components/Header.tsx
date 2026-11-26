@@ -189,7 +189,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       <Link
                         key={sub.name}
                         href={sub.link}
-                        className="block rounded-md px-4 py-2 font-semibold text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
+                        className="block border-b border-gray-200 px-4 py-3 font-semibold text-gray-700 transition last:border-b-0 hover:bg-green-50 hover:text-[#16b96c]"
                       >
                         {sub.name}
                       </Link>
@@ -264,7 +264,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                             key={sub.name}
                             href={sub.link}
                             onClick={closeMenu}
-                            className="block border-b border-gray-100 py-3 text-sm text-gray-600 transition last:border-0 hover:text-[#16b96c]"
+                            className="block border-b border-gray-200 py-3 text-sm text-gray-600 transition last:border-b-0 hover:text-[#16b96c]"
                           >
                             {sub.name}
                           </Link>
