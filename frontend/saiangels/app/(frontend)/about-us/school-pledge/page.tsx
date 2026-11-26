@@ -46,7 +46,7 @@ export default function PledgePage() {
           Our School Pledge
         </h1>
 
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#214471] sm:text-base">
+        <p className="text-center mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#214471] sm:text-base">
             A pledge that inspires patriotism, respect, unity and responsibility.
           </p>
       </section>
