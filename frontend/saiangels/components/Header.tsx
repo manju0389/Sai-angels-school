@@ -136,12 +136,18 @@ export default function Header({ isHome = false }: HeaderProps) {
     >
       
       {/* HEADER NAVIGATION */}
-      <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
+      <div
+      className={`mx-auto flex min-h-[90px] max-w-[1440px] items-center px-5 md:px-8 lg:px-12 ${
+        isHome ? "justify-between" : "justify-center"
+      }`}
+    >
         {/* LOGO */}
         <Link
           href="/"
           onClick={closeMenu}
-          className="relative z-20 flex h-[75px] w-[145px] shrink-0 items-center md:h-[85px] md:w-[170px]"
+          className={`relative z-20 flex h-[75px] w-[145px] shrink-0 items-center md:h-[85px] md:w-[170px] ${
+          isHome ? "" : "absolute left-5 md:left-8 lg:left-12"
+        }`}
         >
           <Image
             src="/images/logo.png"
@@ -154,7 +160,11 @@ export default function Header({ isHome = false }: HeaderProps) {
         </Link>
 
         {/* DESKTOP NAVIGATION */}
-        <nav className="hidden items-center gap-5 xl:flex 2xl:gap-7">
+        <nav
+        className={`hidden items-center gap-5 xl:flex 2xl:gap-7 ${
+          isHome ? "" : "mx-auto"
+        }`}
+      >
           {menu.map((item) => (
             <div key={item.name} className="group relative">
               {item.link ? (
