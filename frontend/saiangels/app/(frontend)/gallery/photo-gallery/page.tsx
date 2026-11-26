@@ -300,12 +300,12 @@ export default function PhotoGalleryPage() {
   }, [selectedImage, showImage]);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <section className="w-full bg-gradient-to-r from-[#f8f1ff] via-[#ece6f1] to-[#fdf2f8] px-4 py-15">
-        <h1 className="text-center text-3xl font-bold leading-tight text-[#102c50] sm:text-5xl">
-          School Gallery
-        </h1>
-      </section>
+  <main className="min-h-screen bg-gray-50">
+    <section className="w-full bg-gradient-to-r from-[#f8f1ff] via-[#ece6f1] to-[#fdf2f8] px-4 py-15">
+      <h1 className="text-center text-3xl font-bold leading-tight text-[#102c50] sm:text-5xl">
+        School Gallery
+      </h1>
+    </section>
 
       <div className="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:space-y-16 sm:px-6 sm:py-14 lg:px-8">
         {loading && (
