@@ -130,7 +130,7 @@ export default function SchoolHymnsPage() {
           Our School Hymns
         </h1>
 
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#214471] sm:text-base">
+        <p className="text-center mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#214471] sm:text-base">
             Our anthem, prayers, and songs reflect the values and spirit of Sai Angels School.
           </p>
       </section>
