@@ -145,14 +145,14 @@ export default function Header({ isHome = false }: HeaderProps) {
               {item.link ? (
                 <Link
                   href={item.link}
-                  className={`whitespace-nowrap py-8 text-[15px] cursor-pointer font-medium transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`whitespace-nowrap py-8 text-[15px] cursor-pointer font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                 </Link>
               ) : (
                 <button
                   type="button"
-                  className={`flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-medium transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`flex items-center gap-1 whitespace-nowrap py-8 text-[15px] font-semibold transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                   <ChevronDown size={15} />
@@ -167,7 +167,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       <Link
                         key={sub.name}
                         href={sub.link}
-                        className="block rounded-md px-4 py-2.5 text-sm text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
+                        className="block rounded-md px-4 py-2.5 text-lg text-gray-700 transition hover:bg-green-50 hover:text-[#16b96c]"
                       >
                         {sub.name}
                       </Link>
@@ -205,7 +205,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                   <Link
                     href={item.link}
                     onClick={closeMenu}
-                    className="block py-3.5 text-base font-medium text-gray-800 hover:text-[#16b96c]"
+                    className="block py-3.5 text-base font-semibold text-gray-800 hover:text-[#16b96c]"
                   >
                     {item.name}
                   </Link>
@@ -219,7 +219,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                         )
                       }
                       aria-expanded={activeDropdown === item.name}
-                      className="flex w-full items-center justify-between py-3.5 text-left text-base font-medium text-gray-800 hover:text-[#16b96c]"
+                      className="flex w-full items-center justify-between py-3.5 text-left text-base font-semibold text-gray-800 hover:text-[#16b96c]"
                     >
                       {item.name}
 
@@ -238,7 +238,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                             key={sub.name}
                             href={sub.link}
                             onClick={closeMenu}
-                            className="block border-b border-gray-100 py-3 text-sm text-gray-600 last:border-0 hover:text-[#16b96c]"
+                            className="block border-b border-gray-100 py-3 text-lg text-gray-600 last:border-0 hover:text-[#16b96c]"
                           >
                             {sub.name}
                           </Link>
