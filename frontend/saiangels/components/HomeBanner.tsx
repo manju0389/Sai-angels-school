@@ -66,9 +66,7 @@ export default function HomeBanner() {
   if (loading || slides.length === 0) return null;
 
   return (
-    <section className="relative z-0 isolate w-full h-[550px] overflow-hidden bg-slate-950 sm:h-[550px] lg:h-[550px] xl:h-[550px]">
-      {/* LIGHT BLACK OVERLAY */}
-        <div className="absolute inset-0 z-[15] bg-black/30 pointer-events-none" />
+    <section className="relative isolate z-0 h-[550px] w-full overflow-hidden bg-slate-950 sm:h-[550px] lg:h-[550px] xl:h-[550px]">
       {/* BANNER IMAGES */}
       {slides.map((slide, index) => (
         <div
@@ -83,19 +81,21 @@ export default function HomeBanner() {
           <img
             src={slide.image}
             alt={`School banner ${index + 1}`}
-            className="block h-full w-full object-cover object-center"
+            className="block h-full w-full object-cover object-center brightness-110 contrast-105"
           />
         </div>
       ))}
 
+      {/* GRADIENT OVERLAY */}
+      <div className="pointer-events-none absolute inset-0 z-[15] bg-gradient-to-b from-black/60 via-black/5 to-black/20" />
+
       {/* SLIDER CONTROLS */}
       {slides.length > 1 && (
         <div className="absolute bottom-6 left-4 z-20 flex items-center gap-2 sm:bottom-8 sm:left-10 lg:left-16">
-
           <button
             onClick={prevSlide}
             aria-label="Previous slide"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white transition hover:bg-white hover:text-slate-900"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 text-white transition hover:bg-white hover:text-slate-900"
           >
             <ChevronLeft size={22} />
           </button>
@@ -103,7 +103,7 @@ export default function HomeBanner() {
           <button
             onClick={nextSlide}
             aria-label="Next slide"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white transition hover:bg-white hover:text-slate-900"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 text-white transition hover:bg-white hover:text-slate-900"
           >
             <ChevronRight size={22} />
           </button>
@@ -118,13 +118,12 @@ export default function HomeBanner() {
                 className={`h-2 rounded-full transition-all duration-300 ${
                   current === index
                     ? "w-8 bg-amber-400"
-                    : "w-2 bg-white/60 hover:bg-white"
+                    : "w-2 bg-white/70 hover:bg-white"
                 }`}
               />
             ))}
           </div>
         </div>
-   
       )}
     </section>
   );
