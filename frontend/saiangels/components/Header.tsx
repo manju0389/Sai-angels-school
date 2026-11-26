@@ -145,7 +145,7 @@ export default function Header({ isHome = false }: HeaderProps) {
               {item.link ? (
                 <Link
                   href={item.link}
-                  className={`whitespace-nowrap py-8 text-[15px] font-medium transition hover:text-[#16b96c] ${navTextColor}`}
+                  className={`whitespace-nowrap py-8 text-[15px] cursor-pointer font-medium transition hover:text-[#16b96c] ${navTextColor}`}
                 >
                   {item.name}
                 </Link>
