@@ -125,16 +125,14 @@ export default function SchoolHymnsPage() {
   return (
     <main className="min-h-screen bg-[#f9f7f7]">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#16091b] via-[#773194] to-[#8537a5] px-4 py-16 sm:py-20 md:py-24">
-        <div className="container mx-auto text-center">
-          <h1 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl">
-            Our School Hymns
-          </h1>
+      <section className="w-full bg-gradient-to-r from-[#f8f1ff] via-[#ece6f1] to-[#fdf2f8] px-4 py-15">
+        <h1 className="text-center text-3xl font-bold leading-tight text-[#102c50] sm:text-5xl">
+          Our School Hymns
+        </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-purple-100 sm:text-base">
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#214471] sm:text-base">
             Our anthem, prayers, and songs reflect the values and spirit of Sai Angels School.
           </p>
-        </div>
       </section>
 
       {/* Hymns and Quick Links */}
