@@ -120,34 +120,28 @@ export default function Header({ isHome = false }: HeaderProps) {
     setActiveDropdown(null);
   };
 
-  // Header navigation text color
+  // Navigation text color
   const navTextColor =
-    scrolled || !isHome ? "text-[#202020]" : "text-white";
+    isHome && !scrolled ? "text-white" : "text-[#202020]";
 
   return (
     <header
-      className={`sticky top-0 z-[9999] w-full transition-all duration-300 ${
+      className={`z-[9999] w-full transition-all duration-300 ${
         isHome
           ? `fixed left-0 top-0 ${
               scrolled ? "bg-white shadow-md" : "bg-transparent"
             }`
-          : "bg-white shadow-md"
+          : "sticky top-0 bg-white shadow-md"
       }`}
     >
-      
       {/* HEADER NAVIGATION */}
-      <div
-      className={`mx-auto flex min-h-[90px] max-w-[1440px] items-center px-5 md:px-8 lg:px-12 ${
-        isHome ? "justify-between" : "justify-center"
-      }`}
-    >
+      <div className="relative mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
+
         {/* LOGO */}
         <Link
           href="/"
           onClick={closeMenu}
-          className={`relative z-20 flex h-[75px] w-[145px] shrink-0 items-center md:h-[85px] md:w-[170px] ${
-          isHome ? "" : "absolute left-5 md:left-8 lg:left-12"
-        }`}
+          className="relative z-20 flex h-[75px] w-[145px] shrink-0 items-center md:h-[85px] md:w-[170px]"
         >
           <Image
             src="/images/logo.png"
@@ -161,12 +155,15 @@ export default function Header({ isHome = false }: HeaderProps) {
 
         {/* DESKTOP NAVIGATION */}
         <nav
-        className={`hidden items-center gap-5 xl:flex 2xl:gap-7 ${
-          isHome ? "" : "mx-auto"
-        }`}
-      >
+          className={`hidden items-center gap-5 xl:flex 2xl:gap-7 ${
+            isHome
+              ? "ml-auto"
+              : "absolute left-1/2 -translate-x-1/2"
+          }`}
+        >
           {menu.map((item) => (
             <div key={item.name} className="group relative">
+
               {item.link ? (
                 <Link
                   href={item.link}
@@ -208,13 +205,13 @@ export default function Header({ isHome = false }: HeaderProps) {
         <button
           type="button"
           onClick={() => {
-            setMenuOpen(!menuOpen);
+            setMenuOpen((prev) => !prev);
             setActiveDropdown(null);
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
-          className="flex h-11 w-11 items-center justify-center rounded-md bg-[#20df82] text-black transition hover:bg-[#15ce72] xl:hidden"
+          className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-[#20df82] text-black transition hover:bg-[#15ce72] xl:hidden"
         >
           {menuOpen ? <X size={25} /> : <MenuIcon size={25} />}
         </button>
@@ -229,6 +226,7 @@ export default function Header({ isHome = false }: HeaderProps) {
           <nav className="mx-auto max-h-[calc(100dvh-90px)] max-w-7xl overflow-x-hidden overflow-y-auto overscroll-y-contain px-5 py-4">
             {menu.map((item) => (
               <div key={item.name} className="border-b border-gray-100">
+
                 {item.link ? (
                   <Link
                     href={item.link}
@@ -250,6 +248,7 @@ export default function Header({ isHome = false }: HeaderProps) {
                       className="flex w-full items-center justify-between py-3.5 text-left text-base font-medium text-gray-800 transition hover:text-[#16b96c]"
                     >
                       {item.name}
+
                       <ChevronDown
                         size={18}
                         className={`transition-transform ${
