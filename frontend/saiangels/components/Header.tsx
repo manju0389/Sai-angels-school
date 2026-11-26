@@ -110,14 +110,17 @@ export default function Header({ isHome = false }: HeaderProps) {
 
   return (
     <header
-      className={`fixed left-0 top-0 z-[9999] w-full transition-all duration-300 ${
-        scrolled
-          ? "bg-white shadow-md"
-          : isHome
-            ? "bg-transparent"
-            : "bg-white shadow-sm"
+      className={`z-[9999] w-full transition-all duration-300 ${
+        isHome
+          ? `fixed left-0 top-0 ${
+              scrolled
+                ? "bg-white shadow-md"
+                : "bg-transparent"
+            }`
+          : "relative bg-white shadow-sm"
       }`}
     >
+      
       {/* HEADER NAVIGATION */}
       <div className="mx-auto flex min-h-[90px] max-w-[1440px] items-center justify-between px-5 md:px-8 lg:px-12">
 
@@ -161,7 +164,7 @@ export default function Header({ isHome = false }: HeaderProps) {
 
               {/* DESKTOP DROPDOWN */}
               {item.submenu && (
-                <div className="invisible absolute left-0 top-full z-50 w-[280px] translate-y-2 rounded-lg bg-white p-3 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                <div className="invisible absolute left-0 top-full z-50 w-[340px] translate-y-2 rounded-lg bg-white p-3 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="max-h-[65vh] overflow-y-auto">
                     {item.submenu.map((sub) => (
                       <Link
