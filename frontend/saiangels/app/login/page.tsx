@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -13,24 +13,20 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+
+    if (!apiUrl) {
+      setError("Backend URL is not configured.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(
-        /\/+$/,
-        ""
-      );
-
-      if (!apiUrl) {
-        setError("Backend URL is not configured.");
-        return;
-      }
-
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {
@@ -45,20 +41,16 @@ export default function AdminLoginPage() {
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok) {
-        setError(
-          data.message ||
-            `Login failed. HTTP status: ${response.status}`
-        );
+      if (!response.ok || !data.success) {
+        setError(data.message || "Invalid username or password.");
         return;
       }
 
-      router.push("/admin/dashboard");
-    } catch (err) {
-      console.error("Login request failed:", err);
-      setError(
-        "Cannot reach the backend. Check the backend URL, CORS settings, and server logs."
-      );
+      setPassword("");
+      router.replace("/admin/dashboard");
+    } catch (error) {
+      console.error("Admin login error:", error);
+      setError("Cannot connect to the server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,11 +89,9 @@ export default function AdminLoginPage() {
               autoComplete="username"
               required
               value={username}
-              onChange={(event) =>
-                setUsername(event.target.value)
-              }
+              onChange={(event) => setUsername(event.target.value)}
               placeholder="Enter your username"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
           </div>
 
@@ -115,25 +105,22 @@ export default function AdminLoginPage() {
 
             <input
               id="password"
-              name="password"
+              name="admin-login-password"
               type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
+              autoComplete="new-password"
+              maxLength={17}
               required
               value={password}
-              onChange={(event) =>
-                setPassword(event.target.value)
-              }
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
             />
 
             <label className="mt-3 flex w-fit cursor-pointer items-center gap-2 text-sm text-slate-600">
               <input
                 type="checkbox"
                 checked={showPassword}
-                onChange={(event) =>
-                  setShowPassword(event.target.checked)
-                }
+                onChange={(event) => setShowPassword(event.target.checked)}
                 className="h-4 w-4 accent-blue-800"
               />
               Show password
@@ -143,7 +130,7 @@ export default function AdminLoginPage() {
           {error && (
             <p
               role="alert"
-              className="text-sm text-red-600"
+              className="rounded-lg bg-red-50 p-3 text-sm text-red-600"
             >
               {error}
             </p>
@@ -152,7 +139,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full cursor-pointer rounded-xl bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="w-full rounded-xl cursor-pointer bg-blue-900 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-blue-200"
           >
             {loading ? "Signing in..." : "Login"}
           </button>
