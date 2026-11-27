@@ -87,15 +87,12 @@ export default function SchoolTestimonial() {
       <div className="relative mx-auto max-w-7xl">
 
         {/* Heading */}
-        <div className="mb-10 text-center sm:mb-14">
-          <h2 className="pb-4 text-3xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
-            Stories of Trust,{" "}
-            <span className="text-[#be9939]">
-              Growth & Happiness
-            </span>
+        <div className="mb-5 text-center sm:mb-10">
+          <h2 className="pb-3 text-3xl font-semibold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
+            Stories of Trust
           </h2>
 
-          <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-amber-400" />
+          <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-amber-400" />
         </div>
 
         {/* Loading */}

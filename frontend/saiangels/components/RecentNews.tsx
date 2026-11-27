@@ -84,11 +84,10 @@ export default function RecentNews() {
       <div className="container">
 
         {/* SECTION HEADING */}
-        <div className="mb-10 text-center sm:mb-14">
-          <h2 className="pb-4 text-3xl font-extrabold leading-tight text-[#cfcfcf] sm:text-4xl lg:text-5xl">
-            Recent News{" "}
+        <div className="mb-5 text-center sm:mb-10">
+          <h2 className="pb-3 text-3xl font-semibold leading-tight text-[#cfcfcf] sm:text-4xl lg:text-5xl">
             <span className="text-white">
-              Announcements
+              Recent News
             </span>
           </h2>
 
