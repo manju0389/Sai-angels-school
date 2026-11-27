@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaYoutube, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope} from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaYoutube, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaWhatsapp} from "react-icons/fa";
 import Image from "next/image";
 
 export default function Footer() {
@@ -174,6 +174,33 @@ export default function Footer() {
       <div className="mt-8 text-center text-gray-400 pt-6 border-t border-gray-700">
         © {currentYear} Sai Angels School. All Rights Reserved.
       </div>
+
+    {/* Floating WhatsApp & Call Buttons - Bottom Left */}
+    <div className="fixed bottom-6 left-6 z-[9999] flex items-center gap-3">
+
+      {/* WhatsApp Button */}
+      <a
+        href="https://wa.me/919632315633?text=Hello%20Sai%20Angels%20School"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl transition-all duration-300 hover:scale-110"
+      >
+        <FaWhatsapp size={30} />
+      </a>
+
+      {/* Call Button */}
+      <a
+        href="tel:+919632315633"
+        aria-label="Call Sai Angels School"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl transition-all duration-300 hover:scale-110 hover:bg-blue-700"
+      >
+        <FaPhoneAlt size={25} />
+      </a>
+
+    </div>
+
     </footer>
+
   );
 }
