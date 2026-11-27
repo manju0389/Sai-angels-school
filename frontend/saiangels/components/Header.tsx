@@ -155,11 +155,7 @@ export default function Header({ isHome = false }: HeaderProps) {
 
         {/* DESKTOP NAVIGATION */}
         <nav
-          className={`hidden items-center gap-5 xl:flex 2xl:gap-7 ${
-            isHome
-              ? "ml-auto"
-              : "absolute left-1/2 -translate-x-1/2"
-          }`}
+          className={`absolute left-1/2 hidden -translate-x-1/2 items-center gap-5 whitespace-nowrap xl:flex 2xl:gap-7`}
         >
           {menu.map((item) => (
             <div key={item.name} className="group relative">
