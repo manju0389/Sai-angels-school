@@ -137,7 +137,7 @@ export default function ChairmanMessage() {
       </section>
 
       {/* MOTTO, VISION & MISSION */}
-      <section className="relative isolate overflow-hidden bg-orange-500 px-4 py-16 sm:py-20 lg:py-12">
+      <section className="relative isolate overflow-hidden bg-[#102c50] px-4 py-16 sm:py-20 lg:py-12">
       <div className="container mx-auto px-3">
       {/* Decorative top waves */}
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10">
@@ -265,6 +265,99 @@ export default function ChairmanMessage() {
       </div>
       </div>
     </section>
+
+
+      
+{/* PRINCIPAL MESSAGE */}
+<section className="relative w-full overflow-hidden py-16 sm:py-20 lg:py-12">
+  <div className="container mx-auto px-3">
+    <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+
+      {/* LEFT: Principal Image */}
+      <div className="order-1">
+        <div className="relative mx-auto max-w-lg pb-10 pl-3 pr-7 pt-3 sm:pl-5 sm:pr-10 sm:pt-5">
+
+          {/* Decorative Frame */}
+          <div className="absolute right-0 top-0 h-[78%] w-[75%] rounded-[2rem] border-2 border-amber-400 sm:rounded-[2.5rem]" />
+
+          {/* Main Image */}
+          <div className="relative z-10 h-[360px] overflow-hidden rounded-[1.75rem] bg-slate-100 shadow-2xl sm:h-[480px] sm:rounded-[2rem]">
+            <img
+              src="/images/chairman.jpg"
+              alt="Principal of Sai Angels School"
+              className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
+            />
+
+            {/* Image Gradient */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-blue-950/80 via-blue-950/20 to-transparent p-6 pt-24 sm:p-8 sm:pt-28">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
+                Inspiring the Future
+              </p>
+              <h3 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+                Excellence Through Education
+              </h3>
+            </div>
+          </div>
+
+          {/* Decorative Dots */}
+          <div className="absolute -left-2 bottom-14 -z-0 grid grid-cols-5 gap-2 opacity-60 sm:-left-3">
+            {Array.from({ length: 25 }).map((_, index) => (
+              <span
+                key={index}
+                className="h-1.5 w-1.5 rounded-full bg-blue-400"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: Principal Message */}
+      <div className="order-2">
+        <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-emerald-700">
+          Leadership & Inspiration
+        </p>
+
+        <h2 className="mt-4 text-3xl font-extrabold leading-tight text-[#102c50] sm:text-4xl lg:text-5xl">
+          A Message From <br />
+          <span className="text-[#be9939]">
+            Our Principal
+          </span>
+        </h2>
+
+        <div className="mt-5 h-1.5 w-20 rounded-full bg-amber-400" />
+
+        <div className="relative mt-8">
+          <FaQuoteLeft className="absolute -left-1 -top-4 text-3xl text-blue-100 sm:text-4xl" />
+
+          <p className="relative pl-2 text-justify text-lg font-semibold leading-8 text-slate-700 sm:text-xl sm:leading-9">
+            “Education is not just about academic excellence; it is
+            about nurturing character, inspiring curiosity, and
+            preparing every child to face the future with confidence.”
+          </p>
+        </div>
+
+        <div className="mt-6 space-y-6 text-justify text-base leading-8 text-slate-600">
+          <p>
+            At Sai Angels Schools, we believe every child has unique
+            potential waiting to be discovered. Our vision is to create
+            an educational environment where knowledge, creativity,
+            discipline, and strong values come together to shape
+            confident and responsible individuals.
+          </p>
+
+          <p>
+            We are committed to providing quality education through
+            dedicated educators, innovative teaching practices, and
+            opportunities for students to explore their talents both
+            inside and outside the classroom.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
     </>
   );
 }
