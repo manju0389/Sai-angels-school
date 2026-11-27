@@ -15,7 +15,7 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username }).select("+password");
 
     if (!admin || admin.isActive !== true) {
       return res.status(401).json({
