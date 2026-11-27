@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaYoutube, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaWhatsapp} from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaYoutube, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaWhatsapp, FaGraduationCap} from "react-icons/fa";
 import Image from "next/image";
 
 export default function Footer() {
@@ -199,6 +199,65 @@ export default function Footer() {
       </a>
 
     </div>
+
+
+{/* Floating Social Media Sidebar - Right Side */}
+<div className="fixed right-0 top-1/2 z-[9999] flex -translate-y-1/2 flex-col gap-2">
+
+  {/* Facebook */}
+  <a
+    href="https://www.facebook.com/people/Sai-Angels-Group-of-Educational-Institutions/100063593875402"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Facebook"
+    className="flex h-11 w-11 items-center justify-center rounded-l-lg bg-[#1877F2] text-white shadow-lg transition-all duration-300 hover:w-14"
+  >
+    <FaFacebookF size={20} />
+  </a>
+
+  {/* Instagram */}
+  <a
+    href="https://www.instagram.com/srisaiangels/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Instagram"
+    className="flex h-11 w-11 items-center justify-center rounded-l-lg bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white shadow-lg transition-all duration-300 hover:w-14"
+  >
+    <FaInstagram size={21} />
+  </a>
+
+  {/* YouTube - School */}
+  <a
+    href="https://www.youtube.com/@srisaiangelsschool-g2l"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Sai Angels School YouTube"
+    className="flex h-11 w-11 items-center justify-center rounded-l-lg bg-[#FF0000] text-white shadow-lg transition-all duration-300 hover:w-14"
+  >
+    <FaYoutube size={22} />
+  </a>
+
+  {/* YouTube - Boarding */}
+  <a
+    href="https://www.youtube.com/@SaiAngelsBoarding"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Sai Angels Boarding YouTube"
+    className="flex h-11 w-11 items-center justify-center rounded-l-lg bg-[#B91C1C] text-white shadow-lg transition-all duration-300 hover:w-14"
+  >
+    <FaYoutube size={22} />
+  </a>
+
+  {/* Admission */}
+  <Link
+    href="/admission/admission"
+    aria-label="Admissions"
+    className="flex h-11 w-11 items-center justify-center rounded-l-lg bg-[#BE9939] text-white shadow-lg transition-all duration-300 hover:w-14"
+  >
+    <FaGraduationCap size={23} />
+  </Link>
+
+</div>
 
     </footer>
 
